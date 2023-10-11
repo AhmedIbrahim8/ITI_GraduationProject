@@ -44,6 +44,20 @@ static void Bootloader_Disable_RW_Protection(uint8_t *Host_Buffer);
 /* This array used to receive the command packet from the Host */
 static uint8_t BL_Host_Buffer[BL_HOST_BUFFER_RX_LENGTH];
 
+static uint8_t Bootloader_Supported_CMDs[12]= {
+	CBL_GET_VER_CMD,                           
+  CBL_GET_HELP_CMD,                           
+  CBL_GET_CID_CMD,                            
+  CBL_GET_RDP_STATUS_CMD,                     
+  CBL_GO_TO_ADDR_CMD,                         
+  CBL_FLASH_ERASE_CMD,                        
+  CBL_MEM_WRITE_CMD,                          
+  CBL_EN_R_W_PROTECT_CMD,                     
+  CBL_MEM_READ_CMD,                           
+  CBL_READ_SECTOR_STATUS_CMD,                 
+  CBL_OTP_READ_CMD,                            
+  CBL_DIS_R_W_PROTECT_CMD                    
+};
 
 /*********************************************************************/
 /*********************** Static APIs Definitions *********************/
@@ -95,8 +109,11 @@ BL_Status BL_UART_Fetch_Host_Command(void)
 
 			/* Recevie Data Bytes based on the Data length received by the bootloader sent by the host */
 			HAL_Status = HAL_UART_Receive(BL_HOST_COMMUNICATION_UART,&BL_Host_Buffer[1],Data_Length, HAL_MAX_DELAY);
+/* Debug Information */
+#if (BL_DEBUG_ENABLE == DEBUG_INFO_ENABLE)
 			BL_Print_Message("Command Length = %d is Received \r\n",Data_Length);
   		BL_Print_Message("Command Packed is Received \r\n");
+#endif 
 			/* Check on the HAL Status */
 			if(HAL_Status != HAL_OK){
 			  	/* The sataus of this function is not ok */
@@ -110,31 +127,18 @@ BL_Status BL_UART_Fetch_Host_Command(void)
 				switch(BL_Host_Buffer[1]){
 					/* Incase the host wants the version of the bootloader */
 					case CBL_GET_VER_CMD:
-						/* Send to the host what the bootloader has recevied for a debug information */
-						BL_Print_Message("CBL_GET_VER_CMD(0x%x) Command is Received  \r\n",CBL_GET_VER_CMD);
-					  /* Send to the host a debug information */
-					  BL_Print_Message("Bootloader starts processing the command   \r\n");
 					  /* Call the static function that responsible for get the bootloader version */
-					  Bootloader_Get_Version(BL_Host_Buffer);
-   					BL_Print_Message("Bootloader Version is sent    \r\n");
+					  Bootloader_Get_Version(BL_Host_Buffer);				  
 					  Status = BL_OK;
 						break;
 					/* Incase the host wants the help of the bootloader */
 					case CBL_GET_HELP_CMD:
-						/* Send to the host what the bootloader has recevied for a debug information */
-						BL_Print_Message("CBL_GET_HELP_CMD(0x%x) Command is Received  \r\n",CBL_GET_HELP_CMD);
-						/* Send to the host a debug information */
-					  BL_Print_Message("Bootloader starts processing the command   \r\n");
 					  /* Call the static function that responsible for get the bootloader help */
 					  Bootloader_Get_Help(BL_Host_Buffer);
 						Status = BL_OK;
 					  break;
 					/* Incase the host wants  */
 					case CBL_GET_CID_CMD:
-						/* Send to the host what the bootloader has recevied for a debug information */
-						BL_Print_Message("CBL_GET_CID_CMD(0x%x) Command is Received  \r\n",CBL_GET_CID_CMD);
-						/* Send to the host a debug information */
-					  BL_Print_Message("Bootloader starts processing the command   \r\n");
 					  /* Call the static function that responsible for get the bootloader chip indentification number  */
 					  Bootloader_Get_Chip_Identification_Number(BL_Host_Buffer);
 						Status = BL_OK;
@@ -378,15 +382,31 @@ static void Bootloader_Get_Version(uint8_t *Host_Buffer)
   /* Extract the CRC32 and Packet Length sent by the Host */
 	Host_CMD_Packet_Len = Host_Buffer[0]+1;										 
 	Host_CRC32 = *((uint32_t *)((Host_Buffer + Host_CMD_Packet_Len) - CRC_TYPE_SIZE_BYTE));
-												 
+/* Debug Information */
+#if (BL_DEBUG_ENABLE == DEBUG_INFO_ENABLE)
+	/* Send to the host what the bootloader has recevied for a debug information */
+	BL_Print_Message("CBL_GET_VER_CMD(0x%x) Command is Received  \r\n",CBL_GET_VER_CMD);
+	/* Send to the host a debug information */
+	BL_Print_Message("Bootloader starts processing the command   \r\n");									 
+#endif												 
 	/* CRC Verification */
 	if(CRC_VERIFICATION_PASSED == Bootloader_CRC_Verify((uint8_t *)&Host_Buffer[0],Host_CMD_Packet_Len - CRC_TYPE_SIZE_BYTE,Host_CRC32)){
+/* Debug Information */
+#if (BL_DEBUG_ENABLE == DEBUG_INFO_ENABLE)
 		BL_Print_Message("CRC calculation is done and equal to the CRC sent by the Host \r\n");
+#endif
 		Bootloader_Send_ACK(4);
 		/* Send the reply packet to the user */
 		Bootloader_Send_Data_To_Host((uint8_t *)BL_Version,4);
+		/* Debug Information */
+#if (BL_DEBUG_ENABLE == DEBUG_INFO_ENABLE)
+  	BL_Print_Message("Bootloader Version is sent and = %d.%d.%d    \r\n",BL_Version[1],BL_Version[2],BL_Version[3]);
+#endif	
 	}
 	else{
+#if (BL_DEBUG_ENABLE == DEBUG_INFO_ENABLE)
+		BL_Print_Message("CRC calculation is done and not equal to the CRC sent by the Host \r\n");
+#endif
 		Bootloader_Send_NACK();
 	}
  
@@ -394,10 +414,86 @@ static void Bootloader_Get_Version(uint8_t *Host_Buffer)
 
 static void Bootloader_Get_Help(uint8_t *Host_Buffer)
 {
+	/* Variable represnt the command packet length */
+	uint16_t Host_CMD_Packet_Len =0;
+	/* Variable represnt the Host CRC */
+  uint32_t Host_CRC32 =0;
+  /* Extract the CRC32 and Packet Length sent by the Host */
+	Host_CMD_Packet_Len = Host_Buffer[0]+1;										 
+	Host_CRC32 = *((uint32_t *)((Host_Buffer + Host_CMD_Packet_Len) - CRC_TYPE_SIZE_BYTE));
+/* Debug Information */
+#if (BL_DEBUG_ENABLE == DEBUG_INFO_ENABLE)
+	/* Send to the host what the bootloader has recevied for a debug information */
+	BL_Print_Message("CBL_GET_HELP_CMD(0x%x) Command is Received  \r\n",CBL_GET_HELP_CMD);
+	/* Send to the host a debug information */
+	BL_Print_Message("Bootloader starts processing the command   \r\n");									 
+#endif												 
+	/* CRC Verification */
+	if(CRC_VERIFICATION_PASSED == Bootloader_CRC_Verify((uint8_t *)&Host_Buffer[0],Host_CMD_Packet_Len - CRC_TYPE_SIZE_BYTE,Host_CRC32)){
+/* Debug Information */
+#if (BL_DEBUG_ENABLE == DEBUG_INFO_ENABLE)
+		BL_Print_Message("CRC calculation is done and equal to the CRC sent by the Host \r\n");
+#endif
+		Bootloader_Send_ACK(12);
+		/* Send the reply packet to the user */
+		Bootloader_Send_Data_To_Host((uint8_t *)Bootloader_Supported_CMDs,12);
+		/* Debug Information */
+#if (BL_DEBUG_ENABLE == DEBUG_INFO_ENABLE)
+ 		BL_Print_Message("Bootloader Supported Commands is sent    \r\n");
+#endif	
+	}
+	else{
+#if (BL_DEBUG_ENABLE == DEBUG_INFO_ENABLE)
+		BL_Print_Message("CRC calculation is done and not equal to the CRC sent by the Host \r\n");
+#endif
+		Bootloader_Send_NACK();
+	}
 }
 
+/* Function responsible for get the DEVICE ID Code */
 static void Bootloader_Get_Chip_Identification_Number(uint8_t *Host_Buffer)
 {
+	/* Variable represnt the command packet length */
+	uint16_t Host_CMD_Packet_Len =0;
+	/* Variable represnt the Host CRC */
+  uint32_t Host_CRC32 =0;
+	/* Variable to store MCU Identification ID Number */
+	uint16_t MCU_Identification_Number = 0;
+  /* Extract the CRC32 and Packet Length sent by the Host */
+	Host_CMD_Packet_Len = Host_Buffer[0]+1;										 
+	Host_CRC32 = *((uint32_t *)((Host_Buffer + Host_CMD_Packet_Len) - CRC_TYPE_SIZE_BYTE));
+/* Debug Information */
+#if (BL_DEBUG_ENABLE == DEBUG_INFO_ENABLE)
+	/* Send to the host what the bootloader has recevied for a debug information */
+	BL_Print_Message("CBL_GET_CID_CMD(0x%x) Command is Received  \r\n",CBL_GET_CID_CMD);
+	/* Send to the host a debug information */
+	BL_Print_Message("Bootloader starts processing the command   \r\n");									 
+#endif
+		/* CRC Verification */
+	if(CRC_VERIFICATION_PASSED == Bootloader_CRC_Verify((uint8_t *)&Host_Buffer[0],Host_CMD_Packet_Len - CRC_TYPE_SIZE_BYTE,Host_CRC32)){
+/* Debug Information */
+#if (BL_DEBUG_ENABLE == DEBUG_INFO_ENABLE)
+		BL_Print_Message("CRC calculation is done and equal to the CRC sent by the Host \r\n");
+#endif
+		/* Get Chip Identification Number */
+		/* We want the first 12 bit so, we anding with mask as shown below */
+		MCU_Identification_Number = (uint16_t)((DBGMCU->IDCODE) & 0x00000FFF);
+		
+		/*Send the ack with the length of the message to the host */
+		Bootloader_Send_ACK(2);
+		/* Send the reply packet to the user */
+		Bootloader_Send_Data_To_Host((uint8_t *)&MCU_Identification_Number,2);		
+		/* Debug Information */
+#if (BL_DEBUG_ENABLE == DEBUG_INFO_ENABLE)
+ 		BL_Print_Message("Bootloader Chip Identification Number is sent and = 0x%x   \r\n",MCU_Identification_Number);
+#endif	
+	}
+	else{
+#if (BL_DEBUG_ENABLE == DEBUG_INFO_ENABLE)
+		BL_Print_Message("CRC calculation is done and not equal to the CRC sent by the Host \r\n");
+#endif
+		Bootloader_Send_NACK();
+	}
 }
 
 static void Bootloader_Read_Protection_Level(uint8_t *Host_Buffer)

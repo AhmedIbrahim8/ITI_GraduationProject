@@ -102,7 +102,9 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+#if (BL_DEBUG_ENABLE == DEBUG_INFO_ENABLE)	
 	BL_Print_Message("BootLoader Started \r\n");
+#endif	
   while (1)
   {
     /* USER CODE END WHILE */
