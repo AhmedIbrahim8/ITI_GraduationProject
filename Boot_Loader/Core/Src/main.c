@@ -67,7 +67,6 @@ void SystemClock_Config(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	uint32_t number = 0;
 	
   /* USER CODE END 1 */
 
@@ -94,18 +93,22 @@ int main(void)
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
 
+	/* Local Variable used to return the status of the bootloader 
+	   Incase the command is supported by the bootloader, the variable will be BL_OK
+	*/
+	BL_Status Status = BL_NACK;
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+	BL_Print_Message("BootLoader Started \r\n");
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-		BL_Print_Message(message1_uart2,number);
-		number++;
-		HAL_Delay(500);
+	Status = BL_UART_Fetch_Host_Command();
   }
   /* USER CODE END 3 */
 }
