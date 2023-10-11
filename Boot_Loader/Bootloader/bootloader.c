@@ -38,8 +38,36 @@ void BL_Print_Message(char *format, ...)
 	   into the Message Variable in string shape
 	*/
 	vsprintf(Message,format,args);
+	
+	/* This # used to select between different communication protocols 
+	   to debug 
+	Ex : we can send the dubug information through CAN or SPI or I2C so,
+       we need to make this function configurable 	
+	*/
+	/* In case of UART is selected as debug communication protocol */
+#if BL_DEBUG_METHOD == BL_ENABLE_UART_DEBUG_MESSAGE
 	/* Send the Debug information through the bootloader debug uart */
 	HAL_UART_Transmit(BL_DEBUG_UART,(uint8_t *)Message,sizeof(Message),HAL_MAX_DELAY);
+
+/* In case of CAN is selected as debug communication protocol */
+#elif BL_DEBUG_METHOD == BL_ENABLE_CAN_DEBUG_MESSAGE
+/* start code */
+
+/* end code   */
+
+/* In case of SPI is selected as debug communication protocol */
+#elif BL_DEBUG_METHOD == BL_ENABLE_SPI_DEBUG_MESSAGE
+/* start code */
+
+/* end code   */
+
+/* In case of I2C is selected as debug communication protocol */
+#elif BL_DEBUG_METHOD == BL_ENABLE_I2C_DEBUG_MESSAGE
+/* start code */
+
+/* end code   */
+
+#endif
 	/* clean up the initialized object */
 	va_end(args);
 }
