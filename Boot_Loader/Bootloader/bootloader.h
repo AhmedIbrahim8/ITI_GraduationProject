@@ -10,15 +10,19 @@
 
 #include "usart.h"
 
+#include "crc.h"
 
 /*********************************************************************/
 /*************************** Macors Declaration **********************/
 /*********************************************************************/
 
-/* UART usedd for get command from the user */
-#define    BL_HOST_COMMUNICATION_UART         &huart2
 /* UART used for the debug information      */
 #define    BL_DEBUG_UART                      &huart2
+/* UART usedd for get command from the user */
+#define    BL_HOST_COMMUNICATION_UART         &huart1
+
+/* CRC engine used */
+#define    CRC_ENGINE_OBJ                     &hcrc
 
 /* Macros for the communication protocols that can be used in the debug */
 #define    BL_ENABLE_UART_DEBUG_MESSAGE       0x00
@@ -44,6 +48,19 @@
 #define    CBL_OTP_READ_CMD                           0x20 
 #define    CBL_DIS_R_W_PROTECT_CMD                    0x21
 
+/* #s for bootloader Versions */
+#define  CBL_VENDOR_ID                  100
+#define  CBL_SW_MAJOR_VERSION            1
+#define  CBL_SW_MINOR_VERSION            0
+#define  CBL_SW_PATCH_VERSION            0
+
+#define  CRC_TYPE_SIZE_BYTE              4
+
+#define  CRC_VERIFICATION_FAILED         0x00
+#define  CRC_VERIFICATION_PASSED         0x01
+
+#define  CBL_SEND_NACK                   0xAB
+#define  CBL_SEND_ACK                    0xCD
 
 /*********************************************************************/
 /*********************** Data Types Declaration **********************/

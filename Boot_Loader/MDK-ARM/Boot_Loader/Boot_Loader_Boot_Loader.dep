@@ -35,7 +35,7 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x652022C4)
 I (../Core/Inc/crc.h)(0x6525D1A6)
 I (../Core/Inc/usart.h)(0x6525D1A7)
 I (../Core/Inc/gpio.h)(0x6525D1A6)
-I (../Bootloader/bootloader.h)(0x6526AB6B)
+I (../Bootloader/bootloader.h)(0x6526F04B)
 I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5F63BFBC)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x5F63BFCA)
 I (C:\Keil_v5\ARM\ARMCC\include\stdarg.h)(0x5F63BFBC)
@@ -738,8 +738,8 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ramfunc.h)(0x652022C4
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h)(0x652022C4)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h)(0x652022C4)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x652022C4)
-F (..\Bootloader\bootloader.c)(0x6526B166)(--c99 -c --cpu Cortex-M4.fp.sp -D__EVAL -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ../Bootloader-I.\RTE\_Boot_Loader-IC:\Users\Ahmed\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\Core\Include-IC:\Users\Ahmed\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.17.1\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="532" -D_RTE_ -DSTM32F401xC -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F401xC-o boot_loader\bootloader.o --omf_browse boot_loader\bootloader.crf --depend boot_loader\bootloader.d)
-I (..\Bootloader\bootloader.h)(0x6526AB6B)
+F (..\Bootloader\bootloader.c)(0x65270602)(--c99 -c --cpu Cortex-M4.fp.sp -D__EVAL -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ../Bootloader-I.\RTE\_Boot_Loader-IC:\Users\Ahmed\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\Core\Include-IC:\Users\Ahmed\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.17.1\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="532" -D_RTE_ -DSTM32F401xC -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F401xC-o boot_loader\bootloader.o --omf_browse boot_loader\bootloader.crf --depend boot_loader\bootloader.d)
+I (..\Bootloader\bootloader.h)(0x6526F04B)
 I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5F63BFBC)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x5F63BFCA)
 I (C:\Keil_v5\ARM\ARMCC\include\stdarg.h)(0x5F63BFBC)
@@ -774,4 +774,5 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ramfunc.h)(0x652022C4
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h)(0x652022C4)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h)(0x652022C4)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x652022C4)
-F (..\Bootloader\bootloader.h)(0x6526AB6B)()
+I (../Core/Inc/crc.h)(0x6525D1A6)
+F (..\Bootloader\bootloader.h)(0x6526F04B)()

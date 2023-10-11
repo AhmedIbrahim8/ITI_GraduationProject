@@ -35,3 +35,4 @@ boot_loader\bootloader.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flas
 boot_loader\bootloader.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h
 boot_loader\bootloader.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h
 boot_loader\bootloader.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
+boot_loader\bootloader.o: ../Core/Inc/crc.h

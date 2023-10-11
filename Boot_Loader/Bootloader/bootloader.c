@@ -6,6 +6,14 @@
 /*********************************************************************/
 /************************ Static APIs Prototypes *********************/
 /*********************************************************************/
+static void Bootloader_Send_Data_To_Host(uint8_t *Host_Buffer,uint32_t Data_Len);
+
+static void Bootloader_Send_ACK(uint8_t Replay_Len);
+
+static void Bootloader_Send_NACK();
+
+static uint8_t Bootloader_CRC_Verify(uint8_t *pData,uint32_t Data_Len,uint32_t Host_CRC);
+
 static void Bootloader_Get_Version(uint8_t *Host_Buffer);
 
 static void Bootloader_Get_Help(uint8_t *Host_Buffer);
@@ -84,9 +92,11 @@ BL_Status BL_UART_Fetch_Host_Command(void)
 			 */
 			Data_Length = BL_Host_Buffer[0];
 			/* Send to the host what the bootloader has recevied for a debug information */
-			BL_Print_Message("Command Length = %d is Received \r\n",Data_Length);
+
 			/* Recevie Data Bytes based on the Data length received by the bootloader sent by the host */
-			HAL_Status = HAL_UART_Receive(BL_HOST_COMMUNICATION_UART,&(BL_Host_Buffer[1]),Data_Length, HAL_MAX_DELAY);
+			HAL_Status = HAL_UART_Receive(BL_HOST_COMMUNICATION_UART,&BL_Host_Buffer[1],Data_Length, HAL_MAX_DELAY);
+			BL_Print_Message("Command Length = %d is Received \r\n",Data_Length);
+  		BL_Print_Message("Command Packed is Received \r\n");
 			/* Check on the HAL Status */
 			if(HAL_Status != HAL_OK){
 			  	/* The sataus of this function is not ok */
@@ -106,6 +116,7 @@ BL_Status BL_UART_Fetch_Host_Command(void)
 					  BL_Print_Message("Bootloader starts processing the command   \r\n");
 					  /* Call the static function that responsible for get the bootloader version */
 					  Bootloader_Get_Version(BL_Host_Buffer);
+   					BL_Print_Message("Bootloader Version is sent    \r\n");
 					  Status = BL_OK;
 						break;
 					/* Incase the host wants the help of the bootloader */
@@ -285,12 +296,100 @@ void BL_Print_Message(char *format, ...)
 }
 
 
+static uint8_t Bootloader_CRC_Verify(uint8_t *pData,uint32_t Data_Len,uint32_t Host_CRC)
+{
+	/* Local variable to store the CRC Status */
+	uint8_t CRC_Status = CRC_VERIFICATION_FAILED;
+	/* Local variable to store the CRC Calculated by CRC Peripheral of MCU */
+	uint32_t MCU_CRC_Calculated=0;
+	/* Local Variable used as a counter to loop into the length of the data */
+	uint8_t Data_Counter=0;
+	/* Data buffer sent by the CRC */
+	uint32_t Data_Buffer = 0;
+	/* Calculate the CRC Value */
+	for(Data_Counter=0;Data_Counter < Data_Len;Data_Counter++){
+		Data_Buffer = (uint32_t)pData[Data_Counter];
+	  /* Call the function of CRC Peripheral to calculate the CRC Value */
+	  MCU_CRC_Calculated = HAL_CRC_Accumulate(CRC_ENGINE_OBJ, &Data_Buffer, 1);
+		
+	}
+	
+  /* Reset the CRC Calculation Unit 
+	   Reset the CRC Data Register because we use the CRC Accumulation which means 
+	   that using the last value of CRC Register to calculate the next element and so on...
+	*/
+	__HAL_CRC_DR_RESET(CRC_ENGINE_OBJ);
+	
+	/* If HOST_CRC is equal to the Calculated CRC , we send CRC Passed */
+	if(Host_CRC == MCU_CRC_Calculated ){
+		CRC_Status = CRC_VERIFICATION_PASSED;
+	}
+	/* If HOST_CRC is not equal to the Calculated CRC , we send CRC failed */
+	else{
+		CRC_Status = CRC_VERIFICATION_FAILED;
+	}
+	return CRC_Status;
+}
+
+
+/* Function used to send ACK to the host with the replied length message */
+static void Bootloader_Send_ACK(uint8_t Replay_Len){
+	uint8_t Ack_Value[2]={CBL_SEND_ACK,Replay_Len};
+	
+	HAL_UART_Transmit(BL_HOST_COMMUNICATION_UART,(uint8_t *)Ack_Value,2,HAL_MAX_DELAY);
+	
+}
+
+/* Function used to send NACK to the host */
+static void Bootloader_Send_NACK(){
+	uint8_t Ack_Value = CBL_SEND_NACK;
+	HAL_UART_Transmit(BL_HOST_COMMUNICATION_UART,&Ack_Value,1,HAL_MAX_DELAY);
+}
+
+
+/* Function used to send data to the host
+*/
+static void Bootloader_Send_Data_To_Host(uint8_t *Host_Buffer,uint32_t Data_Len){
+	HAL_UART_Transmit(BL_HOST_COMMUNICATION_UART,(uint8_t *)Host_Buffer,Data_Len,HAL_MAX_DELAY);
+}
+
+
+
 
 
 
 /* Function Used by Bootloader to send the bootloader version to the host */
 static void Bootloader_Get_Version(uint8_t *Host_Buffer)
 {
+	/* Array for the : 
+	  1- Bootloader Vendor ID 
+	  2- Bootloader Major Version
+	  3- Bootloader Minor Version
+	  4- Bootloader Patch Version
+	*/
+	uint8_t BL_Version[4]={CBL_VENDOR_ID,\
+	                       CBL_SW_MAJOR_VERSION,\
+	                       CBL_SW_MINOR_VERSION,\
+	                       CBL_SW_PATCH_VERSION};
+	/* Variable represnt the command packet length */
+	uint16_t Host_CMD_Packet_Len =0;
+	/* Variable represnt the Host CRC */
+  uint32_t Host_CRC32 =0;
+  /* Extract the CRC32 and Packet Length sent by the Host */
+	Host_CMD_Packet_Len = Host_Buffer[0]+1;										 
+	Host_CRC32 = *((uint32_t *)((Host_Buffer + Host_CMD_Packet_Len) - CRC_TYPE_SIZE_BYTE));
+												 
+	/* CRC Verification */
+	if(CRC_VERIFICATION_PASSED == Bootloader_CRC_Verify((uint8_t *)&Host_Buffer[0],Host_CMD_Packet_Len - CRC_TYPE_SIZE_BYTE,Host_CRC32)){
+		BL_Print_Message("CRC calculation is done and equal to the CRC sent by the Host \r\n");
+		Bootloader_Send_ACK(4);
+		/* Send the reply packet to the user */
+		Bootloader_Send_Data_To_Host((uint8_t *)BL_Version,4);
+	}
+	else{
+		Bootloader_Send_NACK();
+	}
+ 
 }
 
 static void Bootloader_Get_Help(uint8_t *Host_Buffer)
