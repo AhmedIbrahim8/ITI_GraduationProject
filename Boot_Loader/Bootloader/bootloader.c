@@ -6,6 +6,12 @@
 /*********************************************************************/
 /************************ Static APIs Prototypes *********************/
 /*********************************************************************/
+static uint8_t Perform_Flash_Erase(uint8_t Sector_Number,uint8_t Number_Of_Sectors);
+
+static void Bootloader_Jump_To_App_Code();
+
+static uint8_t Host_Jump_Address_Verification(uint32_t Jump_Address);
+
 static void Bootloader_Send_Data_To_Host(uint8_t *Host_Buffer,uint32_t Data_Len);
 
 static void Bootloader_Send_ACK(uint8_t Replay_Len);
@@ -153,19 +159,11 @@ BL_Status BL_UART_Fetch_Host_Command(void)
 					  Status = BL_OK;
 					  break;
 					case CBL_GO_TO_ADDR_CMD:
-				  	/* Send to the host what the bootloader has recevied for a debug information */
-						BL_Print_Message("CBL_GO_TO_ADDR_CMD(0x%x) Command is Received  \r\n",CBL_GO_TO_ADDR_CMD);
-						/* Send to the host a debug information */
-					  BL_Print_Message("Bootloader starts processing the command   \r\n");
 					  /* Call the static function that responsible for jumping to an address   */
 					  Bootloader_Jump_To_Address(BL_Host_Buffer);
 					  Status = BL_OK;
 					  break;
 					case CBL_FLASH_ERASE_CMD:
-						/* Send to the host what the bootloader has recevied for a debug information */
-						BL_Print_Message("CBL_FLASH_ERASE_CMD(0x%x) Command is Received  \r\n",CBL_FLASH_ERASE_CMD);
-						/* Send to the host a debug information */
-					  BL_Print_Message("Bootloader starts processing the command   \r\n");
 					  /* Call the static function that responsible for erasing the flash   */
 					  Bootloader_Erase_Flash(BL_Host_Buffer);
 					  Status = BL_OK;
@@ -438,7 +436,6 @@ static void Bootloader_Get_Help(uint8_t *Host_Buffer)
 		/* Send the reply packet to the user */
 		Bootloader_Send_Data_To_Host((uint8_t *)Bootloader_Supported_CMDs,12);
 		
-		Bootloader_Jump_To_Address(BL_Host_Buffer);
 		
 		/* Debug Information */
 #if (BL_DEBUG_ENABLE == DEBUG_INFO_ENABLE)
@@ -499,8 +496,112 @@ static void Bootloader_Get_Chip_Identification_Number(uint8_t *Host_Buffer)
 	}
 }
 
+
+
+
+
+
+
+
+
+
+
+static uint8_t Host_Jump_Address_Verification(uint32_t Jump_Address){
+		/* Vaiable to store the status of the address verification */
+	uint8_t Address_Verification=ADDRESS_IS_INVALID;
+	
+	/* Check Address between range of flash OR between range of sram  */
+	if( ((Jump_Address >= FLASH_BASE) && (Jump_Address <= STM32F401_FLASH_END)) || \
+      ((Jump_Address >= SRAM1_BASE) && (Jump_Address <= STM32F401_SRAM1_END))		)
+	    {
+				/* Address is valid */
+			Address_Verification = ADDRESS_IS_VALID;
+			
+			}
+	else{
+		    /* Address is invalid */
+		  Address_Verification=ADDRESS_IS_INVALID;
+			}
+	
+	return Address_Verification;
+
+}
+
+
+
+
+
+
+
+
 static void Bootloader_Jump_To_Address(uint8_t *Host_Buffer)
 {
+		/* Variable represnt the command packet length */
+	uint16_t Host_CMD_Packet_Len =0;
+	/* Variable represnt the Host CRC */
+  uint32_t Host_CRC32 =0;
+	/* Variable to store the jumping address from the host packet */
+	uint32_t HOST_Jump_Address=0;
+	/* Vaiable to store the status of the address verification */
+	uint8_t Address_Verification=ADDRESS_IS_INVALID;
+	/* Variable to store the pointer to the jumping address */
+	Jump_Ptr Jump_Address = (void *)0; 
+	
+  /* Extract the CRC32 and Packet Length sent by the Host */
+	Host_CMD_Packet_Len = Host_Buffer[0]+1;										 
+	Host_CRC32 = *((uint32_t *)((Host_Buffer + Host_CMD_Packet_Len) - CRC_TYPE_SIZE_BYTE));
+/* Debug Information */
+#if (BL_DEBUG_ENABLE == DEBUG_INFO_ENABLE)
+	/* Send to the host what the bootloader has recevied for a debug information */
+	BL_Print_Message("CBL_GO_TO_ADDR_CMD(0x%x) Command is Received  \r\n",CBL_GO_TO_ADDR_CMD);
+	/* Send to the host a debug information */
+	BL_Print_Message("Bootloader starts processing the command   \r\n");								 
+#endif
+		/* CRC Verification */
+	if(CRC_VERIFICATION_PASSED == Bootloader_CRC_Verify((uint8_t *)&Host_Buffer[0],Host_CMD_Packet_Len - CRC_TYPE_SIZE_BYTE,Host_CRC32)){
+/* Debug Information */
+#if (BL_DEBUG_ENABLE == DEBUG_INFO_ENABLE)
+		BL_Print_Message("CRC calculation is done and equal to the CRC sent by the Host \r\n");
+#endif
+		/*Send the ack with the length of the message to the host */
+		Bootloader_Send_ACK(1);
+		/* Extract the jumping address  */
+		HOST_Jump_Address = *((uint32_t *)&Host_Buffer[2]);
+		/* Address Verification (Must ensure that address between the range of MCU Memory) */
+		Address_Verification = Host_Jump_Address_Verification(HOST_Jump_Address);
+		/* Send the reply packet to the user */
+		Bootloader_Send_Data_To_Host((uint8_t *)&Address_Verification,1);	
+		/* Check the address verification */
+		if(Address_Verification == ADDRESS_IS_VALID){
+					/* Debug Information */
+#if (BL_DEBUG_ENABLE == DEBUG_INFO_ENABLE)
+ 		BL_Print_Message("Address is valid. Jumping to Address = 0x%x   \r\n",HOST_Jump_Address);
+#endif
+			
+			/* Store the jump address into pointer to fuction 
+			1 : because of the T-Bit 
+			*/
+			Jump_Address = (Jump_Ptr)(HOST_Jump_Address+1);
+			/* Branch to the Address  */
+			Jump_Address();
+		}
+		else{
+#if (BL_DEBUG_ENABLE == DEBUG_INFO_ENABLE)
+ 		BL_Print_Message("Address is 0x%x is not valid   \r\n",HOST_Jump_Address);
+#endif
+		}
+	}
+	else{
+#if (BL_DEBUG_ENABLE == DEBUG_INFO_ENABLE)
+		BL_Print_Message("CRC calculation is done and not equal to the CRC sent by the Host \r\n");
+#endif
+		Bootloader_Send_NACK();
+	}
+}
+
+
+static void Bootloader_Jump_To_App_Code(){
+	
 	/* Local Variable to store the main stack pointer MSP of the 
 	   App code   
 	*/
@@ -536,8 +637,146 @@ static void Bootloader_Read_Protection_Level(uint8_t *Host_Buffer)
 
 
 
+/* Function responsible for performing erasing flash and return :
+   - SUCCESSFUL_ERASE                 
+           OR
+   - UNSUCCESSFUL_ERASE
+*/
+static uint8_t Perform_Flash_Erase(uint8_t Sector_Number,uint8_t Number_Of_Sectors){
+	uint8_t Sector_Validity_Status = INVALID_SECTOR_NUMBER;
+	
+	/* Configuration of the Flash erase */
+	FLASH_EraseInitTypeDef pEraseInit;
+	
+	/* Remaining Sectors */
+	uint8_t Remaining_Sectors = 0;
+	
+	/* Variable to receive the value from the flash erase function */
+	HAL_StatusTypeDef  HAL_Status = HAL_ERROR;
+	
+	uint32_t SectorError=0;
+	
+	/* Incase Number of sectors greater than MCU Provided Sector then, Can't perform Erase */
+	if(Number_Of_Sectors > CBL_FLASH_MAX_SECTOR_NUMBER){
+		Sector_Validity_Status = INVALID_SECTOR_NUMBER;
+	}
+	else{
+		if( (Sector_Number <= (CBL_FLASH_MAX_SECTOR_NUMBER - 1)) || (CBL_FLASH_MASS_ERASE==Sector_Number) ){
+			/* Incase of Mass Erase */
+			if( CBL_FLASH_MASS_ERASE==Sector_Number ){
+				/* Configure the Flash Erasing Type*/
+				pEraseInit.TypeErase =FLASH_TYPEERASE_MASSERASE;  /* Flash Mass Erase Activation */
+#if (BL_DEBUG_ENABLE == DEBUG_INFO_ENABLE)
+		BL_Print_Message("Mass Easing ..................... \r\n");
+#endif	
+			}
+			/* Sectors Erase Only */
+			else{
+#if (BL_DEBUG_ENABLE == DEBUG_INFO_ENABLE)
+		BL_Print_Message("Sectors Easing ..................... \r\n");
+#endif					
+				Remaining_Sectors = CBL_FLASH_MAX_SECTOR_NUMBER - Sector_Number;
+				/* Incase user enters sector number + number of sectors greater thean MCU Maximum Sectors */
+				if(Number_Of_Sectors > Remaining_Sectors){
+					Number_Of_Sectors = Remaining_Sectors;
+				}
+				else{
+				/* Do No Thing */
+				}
+				
+			  /* Configure the Flash Erasing Type */
+				pEraseInit.TypeErase =FLASH_TYPEERASE_SECTORS;	  /* Flash Sector Erase Activation */
+				pEraseInit.Sector = Sector_Number;                /* Initial Flash sector to erase when mass erase is disabled */   
+				pEraseInit.NbSectors = Number_Of_Sectors;         /* Number of sectors to be erased  */
+			}
+		/* STM32F401CC has only one bank */
+		pEraseInit.Banks = FLASH_BANK_1 ;
+		pEraseInit.VoltageRange = FLASH_VOLTAGE_RANGE_3 ;     /*!< Device operating range: 2.7V to 3.6V                */
+		
+	  /* Unlock Flash Control Register */
+		HAL_Status = HAL_FLASH_Unlock();
+		/* Call the  erase Function */
+		HAL_Status = HAL_FLASHEx_Erase(&pEraseInit, &SectorError );
+		/* Check the status of the HAL_Status */
+		if(HAL_SUCCESSFUL_ERASE == SectorError){
+			Sector_Validity_Status = SUCCESSFUL_ERASE;
+		}
+		else{
+			Sector_Validity_Status = UNSUCCESSFUL_ERASE;
+		}
+		/* Lock Flash Control Register */
+		HAL_Status = HAL_FLASH_Unlock();
+		
+		}
+		else{
+			Sector_Validity_Status = UNSUCCESSFUL_ERASE;
+		}
+		
+	}
+	
+	return Sector_Validity_Status;
+}
+
+
+
 static void Bootloader_Erase_Flash(uint8_t *Host_Buffer)
 {
+	/* Variable represnt the command packet length */
+	uint16_t Host_CMD_Packet_Len =0;
+	/* Variable represnt the Host CRC */
+  uint32_t Host_CRC32 =0;
+	
+	/* Variable to stroe the erase status */
+	uint8_t Erase_Status = 0;
+	
+  /* Extract the CRC32 and Packet Length sent by the Host */
+	Host_CMD_Packet_Len = Host_Buffer[0]+1;										 
+	Host_CRC32 = *((uint32_t *)((Host_Buffer + Host_CMD_Packet_Len) - CRC_TYPE_SIZE_BYTE));
+/* Debug Information */
+#if (BL_DEBUG_ENABLE == DEBUG_INFO_ENABLE)
+	/* Send to the host what the bootloader has recevied for a debug information */
+	BL_Print_Message("CBL_FLASH_ERASE_CMD(0x%x) Command is Received  \r\n",CBL_FLASH_ERASE_CMD);
+	/* Send to the host a debug information */
+	BL_Print_Message("Bootloader starts processing the command   \r\n");								 
+#endif												 
+	/* CRC Verification */
+	if(CRC_VERIFICATION_PASSED == Bootloader_CRC_Verify((uint8_t *)&Host_Buffer[0],Host_CMD_Packet_Len - CRC_TYPE_SIZE_BYTE,Host_CRC32)){
+/* Debug Information */
+#if (BL_DEBUG_ENABLE == DEBUG_INFO_ENABLE)
+		BL_Print_Message("CRC calculation is done and equal to the CRC sent by the Host \r\n");
+#endif
+		/*Send the ack with the length of the message to the host */
+		Bootloader_Send_ACK(1);
+		
+		/* Perform Flash Erase  */
+		Erase_Status = Perform_Flash_Erase(Host_Buffer[2],Host_Buffer[3]);
+    /* Incase Erase Flash is not done and Passed  */
+		if(SUCCESSFUL_ERASE == Erase_Status){
+			Bootloader_Send_Data_To_Host((uint8_t *)&Erase_Status,1);
+	  /* Debug Information */
+#if (BL_DEBUG_ENABLE == DEBUG_INFO_ENABLE)
+ 		BL_Print_Message("FLASH Erase is Passed \r\n");
+#endif	
+		}
+		/* Incase Erase Flash is done and Failed */
+    else{
+			Bootloader_Send_Data_To_Host((uint8_t *)&Erase_Status,1);
+		/* Debug Information */
+#if (BL_DEBUG_ENABLE == DEBUG_INFO_ENABLE)
+ 		BL_Print_Message("FLASH Erase is Failed \r\n ");
+#endif	
+		}		
+
+		
+
+	}
+	else{
+#if (BL_DEBUG_ENABLE == DEBUG_INFO_ENABLE)
+		BL_Print_Message("CRC calculation is done and not equal to the CRC sent by the Host \r\n");
+#endif
+		Bootloader_Send_NACK();
+	}	
+	
 }
 
 static void Bootloader_Memory_Write(uint8_t *Host_Buffer)

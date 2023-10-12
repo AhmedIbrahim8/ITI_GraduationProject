@@ -67,6 +67,30 @@
 #define  CBL_SEND_NACK                   0xAB
 #define  CBL_SEND_ACK                    0xCD
 
+#define  ADDRESS_IS_INVALID              0x00
+#define  ADDRESS_IS_VALID                0x01
+
+
+#define  STM32F401_FLASH_SIZE             (256*1024)
+#define  STM32F401_SRAM1_SIZE             (64*1024)
+
+#define  STM32F401_FLASH_END              (FLASH_BASE + STM32F401_FLASH_SIZE)
+
+#define  STM32F401_SRAM1_END              (SRAM1_BASE  + STM32F401_SRAM1_SIZE)
+
+
+#define  INVALID_SECTOR_NUMBER             0x00
+#define  VALID_SECTOR_NUMBER               0x01
+
+#define  UNSUCCESSFUL_ERASE                0x02
+#define  SUCCESSFUL_ERASE                  0x03
+
+/* Max Number Of Sectors in MCU = STM32F401CCU6 */
+#define  CBL_FLASH_MAX_SECTOR_NUMBER       6
+#define  CBL_FLASH_MASS_ERASE              0xFF
+
+#define  HAL_SUCCESSFUL_ERASE              0xFFFFFFFFU
+
 /* # define for flash sector 1 */
 #define FLASH_SECTOR1_BASE_ADDRESS       0x08004000U
 
@@ -81,6 +105,8 @@ typedef enum{
 
 /* Typedef to branch to the app code */
 typedef void (*pMainApp) (void);
+
+typedef void (*Jump_Ptr) (void);
 /*********************************************************************/
 /*************************** APIs Proto-Types ************************/
 /*********************************************************************/
