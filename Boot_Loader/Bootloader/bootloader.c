@@ -437,6 +437,9 @@ static void Bootloader_Get_Help(uint8_t *Host_Buffer)
 		Bootloader_Send_ACK(12);
 		/* Send the reply packet to the user */
 		Bootloader_Send_Data_To_Host((uint8_t *)Bootloader_Supported_CMDs,12);
+		
+		Bootloader_Jump_To_Address(BL_Host_Buffer);
+		
 		/* Debug Information */
 #if (BL_DEBUG_ENABLE == DEBUG_INFO_ENABLE)
  		BL_Print_Message("Bootloader Supported Commands is sent    \r\n");
@@ -496,13 +499,42 @@ static void Bootloader_Get_Chip_Identification_Number(uint8_t *Host_Buffer)
 	}
 }
 
+static void Bootloader_Jump_To_Address(uint8_t *Host_Buffer)
+{
+	/* Local Variable to store the main stack pointer MSP of the 
+	   App code   
+	*/
+	uint32_t MSP_Value = *((volatile uint32_t *)FLASH_SECTOR1_BASE_ADDRESS);
+	/* Local Variable to store the address of the reset handler of
+     the App code 
+	*/
+	uint32_t MainAppAddr = *((volatile uint32_t *)(FLASH_SECTOR1_BASE_ADDRESS+4));
+	/* Local variable of type pointer to function and 
+	   store the address of the reset handler of the code
+	   inside that variable
+	*/
+	pMainApp App_ResetHandlerAddress = (pMainApp)MainAppAddr;
+	
+	/* Before call the reset handler, we need to initialize the MSP so, we
+	   will call the CMSIS Function to set the MSP value
+	*/
+	__set_MSP(MSP_Value);
+	
+	/* Deinitializtion of the Modules used by the bootloader */
+	
+	/* Resets the RCC clock configuration to the default reset state */
+	HAL_RCC_DeInit();
+	
+	/* Call the reset handler of the application code */
+	App_ResetHandlerAddress();
+}
+
+
 static void Bootloader_Read_Protection_Level(uint8_t *Host_Buffer)
 {
 }
 
-static void Bootloader_Jump_To_Address(uint8_t *Host_Buffer)
-{
-}
+
 
 static void Bootloader_Erase_Flash(uint8_t *Host_Buffer)
 {
