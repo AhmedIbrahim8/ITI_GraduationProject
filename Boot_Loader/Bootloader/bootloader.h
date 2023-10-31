@@ -51,7 +51,7 @@
 #define    CBL_MEM_READ_CMD                           0x18
 #define    CBL_READ_SECTOR_STATUS_CMD                 0x19
 #define    CBL_OTP_READ_CMD                           0x20 
-#define    CBL_DIS_R_W_PROTECT_CMD                    0x21
+#define    CBL_CHANGE_ROP_LEVEL_CMD                   0x21
 
 /* #s for bootloader Versions */
 #define  CBL_VENDOR_ID                  100
@@ -91,8 +91,29 @@
 
 #define  HAL_SUCCESSFUL_ERASE              0xFFFFFFFFU
 
+
+#define  FLASH_PAYLOAD_WRITE_FAILED        0x00
+#define  FLASH_PAYLOAD_WRITE_PASSED        0x01
+
+#define  FLASH_LOCK_WRITE_FAILED           0x00
+#define  FLASH_LOCK_WRITE_PASSED           0x01
+
+
 /* # define for flash sector 1 */
 #define FLASH_SECTOR1_BASE_ADDRESS       0x08004000U
+
+
+
+#define    ROP_LEVEL_READ_INVALID         0x00 
+#define    ROP_LEVEL_READ_VALID           0x01
+
+#define    ROP_LEVEL_CHANGE_INVALID       0x00 
+#define    ROP_LEVEL_CHANGE_VALID         0x01
+
+
+#define    CBL_ROP_LEVEL_0                0
+#define    CBL_ROP_LEVEL_1                1
+#define    CBL_ROP_LEVEL_2                2
 
 /*********************************************************************/
 /*********************** Data Types Declaration **********************/
