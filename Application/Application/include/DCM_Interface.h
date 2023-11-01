@@ -18,16 +18,22 @@
 #include "GPT_Interface.h"
 
 
+/*******************************************************************************************/
+/************************************* Motor Macro *****************************************/
+/*******************************************************************************************/
+#define    DCM_RIGHT                            0
+#define    DCM_LEFT                             1
 
 /*******************************************************************************************/
 /************************************* TypeDefs ********************************************/
 /*******************************************************************************************/
 typedef    u8                    DCM_PortType;
 typedef    u8                    DCM_PinType;
-
+typedef    u8                    DCM_Index;
 
 typedef struct{
 	TIMER_IDType Speed_TimerType;
+	TIMER_ChannelType Speed_ChannelType;
 	DCM_PortType Speed_Port_ID;
 	DCM_PinType  Speed_Pin_ID;
 	DCM_PortType IN1_Port_ID;
@@ -37,6 +43,10 @@ typedef struct{
 
 }DCM_ConfigType;
 
+
+typedef enum{
+	DCM_FORWARD,DCM_REVERSE
+}DCM_DirectionType;
 
 /********************************************************************************************/
 /************************************* Extern Configuration *********************************/
@@ -48,5 +58,8 @@ extern DCM_ConfigType Configuration[NUMBER_OF_DC_MOTOR];
 /********************************************************************************************/
 void DCM_Init(DCM_ConfigType *Config);
 
+void DCM_Rotate(DCM_Index DCM_Number,u8 Duty_Cycle,DCM_DirectionType Direction);
+
+void DCM_Stop(DCM_Index DCM_Number);
 
 #endif /* DCM_INTERFACE_H_ */

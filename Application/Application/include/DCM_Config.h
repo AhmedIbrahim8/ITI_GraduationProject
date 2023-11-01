@@ -15,6 +15,7 @@
 #define   DCM_1_SPEED_PORT_ID                          PORTA
 #define   DCM_1_SPEED_PIN_ID                           PIN0
 #define   DCM_1_SPEED_TIMER                            TIMER2_SELECTION
+#define   DCM_1_SPEED_CHANNEL                          TIMER_CHANNEL_1
 
 #define   DCM_1_IN1_PORT_ID                            PORTA
 #define   DCM_1_IN1_PIN_ID                             PIN2
@@ -27,6 +28,7 @@
 #define   DCM_2_SPEED_PORT_ID                          PORTA
 #define   DCM_2_SPEED_PIN_ID                           PIN1
 #define   DCM_2_SPEED_TIMER                            TIMER2_SELECTION
+#define   DCM_2_SPEED_CHANNEL                          TIMER_CHANNEL_2
 
 #define   DCM_2_IN1_PORT_ID                            PORTA
 #define   DCM_2_IN1_PIN_ID                             PIN4

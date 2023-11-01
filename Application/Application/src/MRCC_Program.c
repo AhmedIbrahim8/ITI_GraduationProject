@@ -17,9 +17,10 @@
 #include "../include/BIT_MATH.h"
 
 /* RCC Specified Header Files */
+#include "../include/MRCC_Private.h"
 #include "../include/MRCC_Interface.h"
 #include "../include/MRCC_Config.h"
-#include "../include/MRCC_Private.h"
+
 
 
 /********************************************************************************************/

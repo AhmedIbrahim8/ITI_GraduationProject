@@ -38,6 +38,7 @@
 DCM_ConfigType Configuration[NUMBER_OF_DC_MOTOR] = {
 		{
 		 DCM_1_SPEED_TIMER,
+		 DCM_1_SPEED_CHANNEL,
 		 DCM_1_SPEED_PORT_ID,
 		 DCM_1_SPEED_PIN_ID,
 		 DCM_1_IN1_PORT_ID,
@@ -48,6 +49,7 @@ DCM_ConfigType Configuration[NUMBER_OF_DC_MOTOR] = {
 
 		{
 	     DCM_2_SPEED_TIMER,
+		 DCM_2_SPEED_CHANNEL,
 		 DCM_2_SPEED_PORT_ID,
 		 DCM_2_SPEED_PIN_ID,
 		 DCM_2_IN1_PORT_ID,
