@@ -17,7 +17,7 @@
 
 
 /********************************************************************************************/
-/************************************* Typedefs ********************************************/
+/************************************** Types Declaration ***********************************/
 /********************************************************************************************/
 typedef enum{
 	TIMER2_SELECTION,TIMER5_SELECTION,TIMER3_SELECTION,TIMER4_SELECTION
@@ -130,7 +130,9 @@ typedef struct{
 	TIMER_CountModeType CountMode;
 }TIMER_configType;
 
-
+/********************************************************************************************/
+/************************************** #s used in the Module *******************************/
+/********************************************************************************************/
 
 
 #define       CHANNEL1_MASK           0xFFFFFF00
@@ -156,41 +158,131 @@ extern TIMER_configType Timer5_configuration;
 
 
 
+/********************************************************************************************/
+/************************************** APIs Proto-Types ************************************/
+/********************************************************************************************/
 
-
-
+/* FUNCTION      : TIMER_Init                                      */
+/* INPUT         : Configuration of the Timer Selection            */
+/* OUTPUT        : No Return                                       */
+/* Description   : The First Function needed to be called for the  */
+/*                 initialization of the timer                     */
 void TIMER_Init(TIMER_configType *Configuration);
 
+
+
+/* FUNCTION      : TIMER_VoidSetCallBack                                    */
+/* INPUT         : 1 - Timer Index                                          */
+/*                 2 - Pointer to the function that will be called          */
+/* OUTPUT        : No Return                                                */
+/* Description   : Function to set the call back if an interrupt happened   */
 void TIMER_VoidSetCallBack(TIMER_IDType Timer_Number,void (*ptr)(void));
 
+
+
+/* FUNCTION      : TIMER_SetPrescaler                                       */
+/* INPUT         : 1 - Timer Index                                          */
+/*                 2 - Pre-scaler Value                                     */
+/* OUTPUT        : No Return                                                */
+/* Description   : Function to Adjust the pre-scaler of a given Timer       */
 void TIMER_SetPrescaler(TIMER_IDType Timer_Number , TIMER_PrescalerType prescaler);
 
+
+/* FUNCTION      : TIMER_SetCompareValue                                    */
+/* INPUT         : 1 - Timer Index                                          */
+/*                 2 - Channel Index                                        */
+/*                 3 - Compare Value Index                                  */
+/* OUTPUT        : No Return                                                */
+/* Description   : Function to Adjust the Compare Value of a given Timer    */
+/*                 and given Channel                                        */
 void TIMER_SetCompareValue(TIMER_IDType Timer_Number, TIMER_ChannelType ChannelID , TIMER_OutputCompareValue ComapreValue);
 
 
+
+
+/* FUNCTION      : TIMER_SetARR                                             */
+/* INPUT         : 1 - Timer Index                                          */
+/*                 2 - Auto Reload Register Value                           */
+/* OUTPUT        : No Return                                                */
+/* Description   : Function to Adjust the Auto Reload Register Value  of a  */
+/*                 a given Timer                                            */
 void TIMER_SetARR(TIMER_IDType Timer_Number , TIMER_AutoReloadType AutoReloadValue);
 
+
+
+
+/* FUNCTION      : TIMER_ClearTimerCount                                    */
+/* INPUT         : 1 - Timer Index                                          */
+/* OUTPUT        : No Return                                                */
+/* Description   : Function to Clear the Counter register of a given Timer  */
 void TIMER_ClearTimerCount(TIMER_IDType Timer_Number);
 
 
+
+
+/* FUNCTION      : TIMER_SetDutyCycle                                       */
+/* INPUT         : 1 - Timer Index                                          */
+/*                 2 - Channel Index                                        */
+/*                 3 - DutyCycle                                            */
+/* OUTPUT        : No Return                                                */
+/* Description   : Function to Adjust the Duty Cycle of a given Timer       */
+/*                 and given Channel                                        */
 void TIMER_SetDutyCycle(TIMER_IDType Timer_Number, TIMER_ChannelType ChannelID ,u8 DutyCycle);
 
 
 
+
+
+/* FUNCTION      : TIMER_Start_OneShot                                      */
+/* INPUT         : Timer Index                                              */
+/* OUTPUT        : No Return                                                */
+/* Description   : Function to Start the timer only once                    */
 void TIMER_Start_OneShot(TIMER_IDType Timer_Number);
 
 
+
+/* FUNCTION      : TIMER_Start_Continuous                                    */
+/* INPUT         : 1 - Timer Index                                           */
+/*                 2 - Channel Index                                         */
+/* OUTPUT        : No Return                                                 */
+/* Description   : Function to Start the timer Continuously of a given timer */
+/*                 and a given Channel or no channel or All channels         */
 void TIMER_Start_Continuous(TIMER_IDType Timer_Number,TIMER_ChannelType ChannelID);
 
 
-void TIMER_DelayUS(TIMER_IDType Timer_Number,u32 Delay_Value);
 
 
+/* FUNCTION      : TIMER_EnableInterrupt                                     */
+/* INPUT         : 1 - Timer Index                                           */
+/*                 2 - Interrupt Type                                        */
+/* OUTPUT        : No Return                                                 */
+/* Description   : Function to Enable the Interrupt for a given Timer and a  */
+/*                 given Interrupt Type                                      */
 void TIMER_EnableInterrupt(TIMER_IDType Timer_Number,TIMER_InterryptType InterruptID);
 
+
+
+
+/* FUNCTION      : TIMER_DisableInterrupt                                     */
+/* INPUT         : 1 - Timer Index                                            */
+/*                 2 - Interrupt Type                                         */
+/* OUTPUT        : No Return                                                  */
+/* Description   : Function to Disable the Interrupt for a given Timer and a  */
+/*                 given Interrupt Type                                       */
 void TIMER_DisableInterrupt(TIMER_IDType Timer_Number,TIMER_InterryptType InterruptID);
 
 
+
+
+
+/* FUNCTION      : TIMER_ChannelInit                                          */
+/* INPUT         : 1 - Timer Index                                            */
+/*                 2 - Channel Index                                          */
+/*                 3 - Mode of the Channel                                    */
+/*                 4 - Channel Active Type (Active High or Active Low)        */
+/*                 5 - Channel Running Type (ON or OFF)                       */
+/* OUTPUT        : No Return                                                  */
+/* Description   : Function to initializating the Channel                     */
 void TIMER_ChannelInit(TIMER_IDType Timer_Number,
 		               TIMER_ChannelType ChannelID,
 					   TIMER_OutputCompareModeType Mode,
@@ -198,17 +290,32 @@ void TIMER_ChannelInit(TIMER_IDType Timer_Number,
 					   TIMER_ChannelEnableType ChannelType);
 
 
+
+
+
+/* FUNCTION      : TIMER_Stop                                               */
+/* INPUT         : Timer Index                                              */
+/* OUTPUT        : No Return                                                */
+/* Description   : Function to Stop the timer                               */
 void TIMER_Stop(TIMER_IDType Timer_Number,TIMER_ChannelType ChannelID);
 
 
 
 
 
-
+/* FUNCTION      : TIMER_DelayUS                                            */
+/* INPUT         : 1 - Timer Index                                          */
+/*                 2 - Delay Value in Micro-seconds                         */
+/* OUTPUT        : No Return                                                */
+/* Description   : Function to Delay in Micro-seconds                       */
 void TIMER_DelayUS(TIMER_IDType Timer_Number,u32 Delay_Value);
 
 
-
+/* FUNCTION      : TIMER_DelayMS                                            */
+/* INPUT         : 1 - Timer Index                                          */
+/*                 2 - Delay Value in Milli-seconds                         */
+/* OUTPUT        : No Return                                                */
+/* Description   : Function to Delay in Milli-seconds                       */
 void TIMER_DelayMS(TIMER_IDType Timer_Number,u32 Delay_Value);
 
 
@@ -224,6 +331,11 @@ u32 TIMER_u32GetRemainingTime(TIMER_IDType Timer_Number);
 
 
 
+void voidICU_Init(void);
+f32 f32MeasureTon(void);
+f32 f32MeasureTotalTime(void);
+f32 f32MeasureFrequncy(void);
+f32 f32MeasureDutyCycle(void);
 
 
 

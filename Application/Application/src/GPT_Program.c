@@ -24,6 +24,9 @@
 
 #define   F_APB1_MHZ               16
 
+/* global variable for Input Capture TIM1 CH1 */
+volatile u16 Global_u16Tim1Ch1InputCaptures[2] ={0};
+volatile u8  Global_u8Tim1Ch1Counter =1;
 
 
 
@@ -1502,4 +1505,100 @@ void TIMER_SetDutyCycle(TIMER_IDType Timer_Number, TIMER_ChannelType ChannelID ,
 
 
 
+
+
+void voidICU_Init(void)
+{
+
+
+		TIM1->PSC = TIM1_PRESCALER -1;		// Set the prescaler
+		TIM1->ARR = 0xFFFF;					// set ARR for max value
+		TIM1->CNT = 0 ;						// Clear counter
+
+		/* capture is done ---> CH1 is rising edge and CH2 is falling edge */
+		TIM1->CCER &=  ~0x2;
+		TIM1->CCER |=  0x20;
+		/* configure CH1 as direct input TI1 & CH2 as indirect input TI2 */
+		//TIM1->CCMR1 |=  0x1;	//TIM1->CCMR1 &= ~0x2;
+		//TIM1->CCMR1 &= ~0x10;	//TIM1->CCMR1 |=  0x20;
+		/* no prescaler, capture is done each time an edge is detected on the capture input --> on CH1 & CH2 */
+		//TIM1->CCMR1 &= ~0xC;	//TIM1->CCMR1 &= ~0xC00;
+		/* No filter, sampling is done at fDTS --> on CH1 & CH2 */
+		//TIM1->CCMR1 &= ~0xF0;	//TIM1->CCMR1 &= ~0xF000;
+	TIM1->CCMR1 = 0x0201; /*Enable Filter*/
+
+		/* configure the timer slave mode with TI1FP1 as reset signal */
+		TIM1->SMCR = 0x54;
+
+		/* Capture enable for CH1 & CH2 */
+		TIM1->CCER |=  0x11;
+		/* counter enable */
+		TIM1->CR1  |= 0x1;
+		/* interrupt enable for CH1 & CH2 */
+		TIM1->DIER  |= 0x2;
+
+} // end of function
+
+
+f32 f32MeasureTon(void)
+{
+
+	volatile f32 Local_f32TimeOn =0;
+
+
+		Local_f32TimeOn = Global_u16Tim1Ch1InputCaptures[1];
+
+	return Local_f32TimeOn;
+}
+
+f32 f32MeasureTotalTime(void)
+{
+
+	volatile f32 Local_f32TotalTime =0;
+
+		Local_f32TotalTime = Global_u16Tim1Ch1InputCaptures[0];
+
+	return Local_f32TotalTime;
+}
+f32 f32MeasureFrequncy(void) {
+
+	volatile f32 Local_f32Frequncy = 0;
+
+	Local_f32Frequncy = (1000000UL) / Global_u16Tim1Ch1InputCaptures[0];
+
+
+	return Local_f32Frequncy;
+}
+f32 f32MeasureDutyCycle(void) {
+
+	volatile f32 Local_f32DutyCycle = 0;
+
+	Local_f32DutyCycle = (float) ((Global_u16Tim1Ch1InputCaptures[1] / Global_u16Tim1Ch1InputCaptures[0]) * 100.0);
+
+	return Local_f32DutyCycle;
+}
+
+
+
+
+void TIM1_CC_IRQHandler(void)
+{
+//	if(! Global_u8Tim1Ch1IsCaptureDone)
+//	{
+		if(1 == Global_u8Tim1Ch1Counter)
+		{
+			Global_u16Tim1Ch1InputCaptures[0] = TIM1->CCR1 ;
+			Global_u8Tim1Ch1Counter++;
+		}
+		else if(2 == Global_u8Tim1Ch1Counter)
+		{
+			Global_u16Tim1Ch1InputCaptures[1] = TIM1->CCR2;
+		Global_u16Tim1Ch1InputCaptures[1] = Global_u16Tim1Ch1InputCaptures[1]
+				+ 2;
+			Global_u8Tim1Ch1Counter = 1;
+//			Global_u8Tim1Ch1IsCaptureDone = TRUE;
+		}
+
+
+}
 

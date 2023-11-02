@@ -55,7 +55,39 @@ typedef struct{
 }GPT_t;
 
 
+typedef struct
+{
+	volatile u32 CR1;
+	volatile u32 CR2;    // reserved in TIM10-11-13-14
+	volatile u32 SMCR;   // this register reserved in TIM6-TIM7 (basic timers)
+	volatile u32 DIER;
+	volatile u32 SR;
+	volatile u32 EGR;
+	volatile u32 CCMR1;
+	volatile u32 CCMR2;  // reserved in TIM10-11-13-14
+	volatile u32 CCER;
+	volatile u32 CNT;
+	volatile u32 PSC;
+	volatile u32 ARR;
+
+	/* all nest regester not exist in TIM6-TIM7 (basic timers) */
+	volatile u32 RCR;    // // this register reserved in TIM2-TIM5 & TIM10-11-13-14 (general perpose)
+	volatile u32 CCR1;
+	volatile u32 CCR2;   // reserved in TIM10-11-13-14
+	volatile u32 CCR3;   // reserved in TIM10-11-13-14
+	volatile u32 CCR4;   // reserved in TIM10-11-13-14
+	volatile u32 BDTR;   // // this register reserved in TIM2-TIM5 & TIM10-11-13-14 (general perpose)
+	volatile u32 DCR;    // reserved in TIM10-11-13-14
+	volatile u32 DMAR;   // reserved in TIM10-11-13-14
+	volatile u32 OR;
+}TIMER_t;
+
+
+
 /* Macro to point to the base address of the GPT Module */
+
+#define       TIM1    ( (TIMER_t *)0x40010000 )
+
 #define       TIMER2          ((volatile GPT_t*)TIMER2_BASE_ADDRESS)
 
 #define       TIMER3          ((volatile GPT_t*)TIMER3_BASE_ADDRESS)
@@ -181,4 +213,35 @@ typedef struct{
 #define  CC2G            2
 #define  CC1G            1
 #define  UG              0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* 	to control in counter Clock (CNT_CLK) of TIM1
+ * 	CNT_CLK  = TIMx_CLK / TIM4_PRESCALER
+ * 	TIMx_CLK = APB2_CLK 		if (APBx_PRESCALER  = 1)
+ * 	TIMx_CLK = APB2_CLK *2		if (APBx_PRESCALER != 1)
+ *
+	options	:		1 ~ 65535								*/
+#define TIM1_PRESCALER			16
+
+/*	options :		calculate as shown in upper notation 	*/
+#define TIM1_CNT_CLK			1600
+
+
+
 #endif /* MTIMER_PRIVATE_H_ */

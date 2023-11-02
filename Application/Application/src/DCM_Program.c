@@ -124,5 +124,37 @@ void DCM_Stop(DCM_Index DCM_Number){
 }
 
 
+void App_CarMoveForward(u8 Speed){
+	DCM_Rotate(DCM_RIGHT,Speed,DCM_FORWARD);
+	DCM_Rotate(DCM_LEFT,Speed,DCM_FORWARD);
+}
+
+void App_CarMoveReverse(u8 Speed){
+	DCM_Rotate(DCM_RIGHT,Speed,DCM_REVERSE);
+	DCM_Rotate(DCM_LEFT,Speed,DCM_REVERSE);
+}
+
+
+void App_CarMoveRight(u8 Speed){
+	DCM_Stop(DCM_RIGHT);
+	DCM_Rotate(DCM_LEFT,Speed,DCM_FORWARD);
+}
+
+void App_CarMoveLeft(u8 Speed){
+	DCM_Rotate(DCM_RIGHT,Speed,DCM_REVERSE);
+	DCM_Stop(DCM_LEFT);
+}
+
+
+void App_CarMoveAround(u8 Speed){
+	DCM_Rotate(DCM_RIGHT,Speed,DCM_FORWARD);
+	DCM_Rotate(DCM_LEFT,Speed,DCM_REVERSE);
+}
+
+void App_CarStop(){
+	DCM_Stop(DCM_LEFT);
+	DCM_Stop(DCM_RIGHT);
+
+}
 
 

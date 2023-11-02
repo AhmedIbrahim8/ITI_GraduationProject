@@ -1,0 +1,114 @@
+//#include "../include/STD_Types.h"
+//#include "../include/GPT_Interface.h"
+//#include "../include/MGPIO_Interface.h"
+//#include "../include/MRCC_Interface.h"
+//#include "../include/MNVIC_Interface.h"
+//#include "../include/GPT_Private.h"
+//
+//
+//#include "../include/BIT_MATH.h"
+//
+//
+//void toggle(){
+//	static u8 flag=0;
+//	flag ++;
+//	if(flag == 1){
+//		MGPIO_SetPinValue(PORTA,PIN4,PIN_LEVEL_LOW);
+//	}
+//	else{
+//		MGPIO_SetPinValue(PORTA,PIN4,PIN_LEVEL_HIGH);
+//		flag = 0;
+//	}
+//}
+//
+//
+//int main(){
+//	MRCC_Init();
+//
+//	MRCC_Enable_Peripheral(RCC_APB1,RCC_APB1_TIM2);
+//	MRCC_Enable_Peripheral(RCC_APB1,RCC_APB1_TIM5);
+//	MRCC_Enable_Peripheral(RCC_AHB1,RCC_AHB1_GPIOA);
+//
+//	MGPIO_SetMode(PORTA,PIN0,ALTERNATE_FUNCTION_MODE);
+//	MGPIO_SetAlternativeFuncPin(PORTA,PIN0,AF2_TIM3_TIM4_TIM5);
+//
+//	MGPIO_SetMode(PORTA,PIN1,ALTERNATE_FUNCTION_MODE);
+//	MGPIO_SetAlternativeFuncPin(PORTA,PIN1,AF2_TIM3_TIM4_TIM5);
+//
+//	MGPIO_SetMode(PORTA,PIN2,ALTERNATE_FUNCTION_MODE);
+//	MGPIO_SetAlternativeFuncPin(PORTA,PIN2,AF2_TIM3_TIM4_TIM5);
+//
+//	MGPIO_SetMode(PORTA,PIN3,ALTERNATE_FUNCTION_MODE);
+//	MGPIO_SetAlternativeFuncPin(PORTA,PIN3,AF2_TIM3_TIM4_TIM5);
+//
+//	MGPIO_SetMode(PORTA,PIN4,GENRAL_PURPOSE_OUTPUT_MODE);
+//	MGPIO_SetOutputPinMode(PORTA,PIN4,OUTPUT_PUSH_PULL,OUTPUT_LOW_SPEED_TYPE);
+//	MGPIO_SetPinValue(PORTA,PIN4,PIN_LEVEL_HIGH);
+//
+//	TIMER_Init(&Timer2_configuration);
+//	TIMER_SetPrescaler(TIMER2_SELECTION,15);
+//	TIMER_SetARR(TIMER2_SELECTION,1000000);
+//	TIMER_VoidSetCallBack(TIMER2_SELECTION,toggle);
+//	TIMER_EnableInterrupt(TIMER2_SELECTION,TIMER_UPDATE_INTERRUPT);
+//	MNVIC_VoidEnbleInterrupt(EXTINT_TIM2_POSITION);
+//	TIMER_Start_Continuous(TIMER2_SELECTION,TIMER_NO_CHANNELS);
+//
+////	MNVIC_VoidEnbleInterrupt(EXTINT_TIM5_POSITION);
+////	MNVIC_VoidEnbleInterrupt(EXTINT_TIM2_POSITION);
+//
+////	MGPIO_SetMode(PORTA,PIN4,GENRAL_PURPOSE_OUTPUT_MODE);
+////	MGPIO_SetOutputPinMode(PORTA,PIN4,OUTPUT_PUSH_PULL,GPIO_PIN_LEVEL_LOW );
+////	MGPIO_SetPinValue(PORTA,PIN4,PIN_LEVEL_LOW);
+//
+//
+//
+//	TIMER_Init(&Timer5_configuration);
+//	TIMER_ChannelInit(TIMER5_SELECTION,
+//			TIMER_CHANNEL_1,
+//			TIMER_PWM_MODE_1,
+//			ACTIVE_HIGH,
+//			TIMER_CHANNEL_ENABLE);
+//	TIMER_ChannelInit(TIMER5_SELECTION,
+//			TIMER_CHANNEL_2,
+//			TIMER_PWM_MODE_1,
+//			ACTIVE_HIGH,
+//			TIMER_CHANNEL_ENABLE);
+//	TIMER_ChannelInit(TIMER5_SELECTION,
+//			TIMER_CHANNEL_3,
+//			TIMER_PWM_MODE_1,
+//			ACTIVE_HIGH,
+//			TIMER_CHANNEL_ENABLE);
+//	TIMER_ChannelInit(TIMER5_SELECTION,
+//			TIMER_CHANNEL_4,
+//			TIMER_PWM_MODE_1,
+//			ACTIVE_HIGH,
+//			TIMER_CHANNEL_ENABLE);
+//
+//
+//	TIMER_ClearTimerCount(TIMER5_SELECTION);
+//
+//	/* Timer 5 pwm */
+//	TIMER_SetPrescaler(TIMER5_SELECTION,15);
+//	TIMER_SetARR(TIMER5_SELECTION,59999);
+//
+//	TIMER_SetCompareValue(TIMER5_SELECTION,TIMER_CHANNEL_1,9999);
+//	TIMER_SetCompareValue(TIMER5_SELECTION,TIMER_CHANNEL_2,999);
+//	TIMER_SetCompareValue(TIMER5_SELECTION,TIMER_CHANNEL_3,5999);
+//	TIMER_SetCompareValue(TIMER5_SELECTION,TIMER_CHANNEL_4,4999);
+//	TIMER_Start_Continuous(TIMER5_SELECTION,TIMER_ALL_CHANNELS);
+//
+//
+//	while(1){
+////		TIMER_DelayMS(TIMER2_SELECTION,1000);
+////		MGPIO_SetPinValue(PORTA,PIN4,PIN_LEVEL_HIGH);
+////		TIMER_DelayMS(TIMER3_SELECTION,1000);
+////		MGPIO_SetPinValue(PORTA,PIN4,PIN_LEVEL_LOW);
+////		TIMER_DelayMS(TIMER4_SELECTION,1000);
+////		MGPIO_SetPinValue(PORTA,PIN4,PIN_LEVEL_HIGH);
+////		TIMER_DelayMS(TIMER2_SELECTION,1000);
+////		MGPIO_SetPinValue(PORTA,PIN4,PIN_LEVEL_LOW);
+//	}
+//
+//
+//}
+//

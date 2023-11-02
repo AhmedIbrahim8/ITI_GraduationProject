@@ -62,4 +62,20 @@ void DCM_Rotate(DCM_Index DCM_Number,u8 Duty_Cycle,DCM_DirectionType Direction);
 
 void DCM_Stop(DCM_Index DCM_Number);
 
+
+void App_CarMoveForward(u8 Speed);
+void App_CarMoveReverse(u8 Speed);
+void App_CarMoveRight(u8 Speed);
+void App_CarMoveLeft(u8 Speed);
+void App_CarMoveAround(u8 Speed);
+
+
+void App_CarStop();
+
+
+
+
+
+
+
 #endif /* DCM_INTERFACE_H_ */
