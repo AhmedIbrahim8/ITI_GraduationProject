@@ -9,7 +9,7 @@
 
 #include "../include/MRCC_Interface.h"
 
-
+#include "../include/App.h"
 
 void Peripheral_EnableClock(void){
 	MRCC_Init();

@@ -162,11 +162,12 @@ BL_Status BL_UART_Fetch_Host_Command(void)
 					  /* Call the static function that responsible for reading the protection level  */
 					  Bootloader_Read_Protection_Level(BL_Host_Buffer);
 					  Status = BL_OK;
+					 // Bootloader_Jump_To_App_Code();
 					  break;
 					case CBL_GO_TO_ADDR_CMD:
 					  /* Call the static function that responsible for jumping to an address   */
-					  Bootloader_Jump_To_Address(BL_Host_Buffer);
-				 // Bootloader_Jump_To_App_Code();
+				    Bootloader_Jump_To_Address(BL_Host_Buffer);
+				    Bootloader_Jump_To_App_Code();
 					  Status = BL_OK;
 					  break;
 					case CBL_FLASH_ERASE_CMD:
@@ -405,7 +406,6 @@ static void Bootloader_Get_Version(uint8_t *Host_Buffer)
 #endif
 		Bootloader_Send_NACK();
 	}
- Bootloader_Jump_To_App_Code();
 }
 
 static void Bootloader_Get_Help(uint8_t *Host_Buffer)
@@ -580,6 +580,7 @@ static void Bootloader_Jump_To_Address(uint8_t *Host_Buffer)
 			1 : because of the T-Bit 
 			*/
 			Jump_Address = (Jump_Ptr)(HOST_Jump_Address+1);
+			Bootloader_Jump_To_App_Code();
 			/* Branch to the Address  */
 			Jump_Address();
 		}
@@ -600,32 +601,37 @@ static void Bootloader_Jump_To_Address(uint8_t *Host_Buffer)
 
 static void Bootloader_Jump_To_App_Code(){
 	
-	/* Local Variable to store the main stack pointer MSP of the 
-	   App code   
-	*/
-	uint32_t MSP_Value = *((volatile uint32_t *)FLASH_SECTOR1_BASE_ADDRESS);
-	/* Local Variable to store the address of the reset handler of
-     the App code 
-	*/
-	uint32_t MainAppAddr = *((volatile uint32_t *)(FLASH_SECTOR1_BASE_ADDRESS+4));
-	/* Local variable of type pointer to function and 
-	   store the address of the reset handler of the code
-	   inside that variable
-	*/
-	pMainApp App_ResetHandlerAddress = (pMainApp)MainAppAddr;
+		/* Value of the main stack pointer of our main application */
+	volatile uint32_t MSP_Value = *((volatile uint32_t *)FLASH_SECTOR2_BASE_ADDRESS);
 	
-	/* Before call the reset handler, we need to initialize the MSP so, we
-	   will call the CMSIS Function to set the MSP value
-	*/
+	
+	MSP_Value = MSP_Value - 0x00000010U;
+	
+
+	
+	/* Set Main Stack Pointer */
 	__set_MSP(MSP_Value);
+//	OS_SET_MSP(MSP_Value);
 	
-	/* Deinitializtion of the Modules used by the bootloader */
+		/* DeInitialize / Disable of modules */
+	HAL_RCC_DeInit(); /* DeInitialize the RCC clock configuration to the default reset state. */
+	                  /* Disable Maskable Interrupt */
+										
+										
+		/* Reset Handler definition function of our main application */
+	uint32_t MainAppAddr = *((volatile uint32_t *)(FLASH_SECTOR2_BASE_ADDRESS + 4));
 	
-	/* Resets the RCC clock configuration to the default reset state */
-	HAL_RCC_DeInit();
+
 	
-	/* Call the reset handler of the application code */
-	App_ResetHandlerAddress();
+	/* Fetch the reset handler address of the user application */
+	volatile pMainApp ResetHandler_Address = (pMainApp)MainAppAddr;
+	
+	/* Jump to Application Reset Handler */
+	ResetHandler_Address();
+	
+	
+	
+
 }
 
 

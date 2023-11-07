@@ -862,19 +862,23 @@ void TIMER_Start_OneShot(TIMER_IDType Timer_Number){
 	/* Here, after one shot, it will stop the timer
 	 * Clearing the CEN Bit in CR1 Register
 	 *  */
-	SET_BIT(TIMER2->CR1,OPM);
+
 	switch(Timer_Number)
 	{
 	case TIMER2_SELECTION:
+		SET_BIT(TIMER2->CR1,OPM);
 		SET_BIT(TIMER2->CR1,CEN);
 		break;
 	case TIMER3_SELECTION:
+		SET_BIT(TIMER3->CR1,OPM);
 		SET_BIT(TIMER3->CR1,CEN);
 		break;
 	case TIMER4_SELECTION:
+		SET_BIT(TIMER4->CR1,OPM);
 		SET_BIT(TIMER4->CR1,CEN);
 		break;
 	case TIMER5_SELECTION:
+		SET_BIT(TIMER5->CR1,OPM);
 		SET_BIT(TIMER5->CR1,CEN);
 		break;
 	}
@@ -884,10 +888,11 @@ void TIMER_Start_OneShot(TIMER_IDType Timer_Number){
 
 void TIMER_Start_Continuous(TIMER_IDType Timer_Number,TIMER_ChannelType ChannelID){
 	/* Here, It will continuously output a PWM Signal */
-	CLEAR_BIT(TIMER2->CR1,OPM);
+
 	switch(Timer_Number)
 	{
 	case TIMER2_SELECTION:
+		CLEAR_BIT(TIMER2->CR1,OPM);
 		/* Enable Channels */
 		switch(ChannelID){
 		case TIMER_CHANNEL_1:
@@ -917,7 +922,7 @@ void TIMER_Start_Continuous(TIMER_IDType Timer_Number,TIMER_ChannelType ChannelI
 
 		break;
 	case TIMER3_SELECTION:
-
+		CLEAR_BIT(TIMER3->CR1,OPM);
 		/* Enable Channels */
 		switch(ChannelID){
 		case TIMER_CHANNEL_1:
@@ -946,7 +951,7 @@ void TIMER_Start_Continuous(TIMER_IDType Timer_Number,TIMER_ChannelType ChannelI
 		SET_BIT(TIMER3->CR1,CEN);
 		break;
 	case TIMER4_SELECTION:
-
+		CLEAR_BIT(TIMER4->CR1,OPM);
 		/* Enable Channels */
 		switch(ChannelID){
 		case TIMER_CHANNEL_1:
@@ -974,7 +979,7 @@ void TIMER_Start_Continuous(TIMER_IDType Timer_Number,TIMER_ChannelType ChannelI
 		SET_BIT(TIMER4->CR1,CEN);
 		break;
 	case TIMER5_SELECTION:
-
+		CLEAR_BIT(TIMER5->CR1,OPM);
 		/* Enable Channels */
 		switch(ChannelID){
 		case TIMER_CHANNEL_1:

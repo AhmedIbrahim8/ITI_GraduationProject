@@ -150,6 +150,8 @@ typedef struct{
 extern TIMER_configType Timer2_configuration;
 extern TIMER_configType Timer5_configuration;
 
+extern TIMER_configType Timer4_configuration;
+
 
 
 

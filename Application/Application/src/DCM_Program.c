@@ -55,6 +55,10 @@ void DCM_Init(DCM_ConfigType *Config){
 
 	}
 
+	/* OMAR */
+//	MGPIO_SetMode(PORTA,PIN2,ALTERNATE_FUNCTION_MODE);
+//	MGPIO_SetAlternativeFuncPin(PORTA,PIN2,AF1_TIM1_TIM2);
+
 	/* Set the PWM For the speed Pin */
 	TIMER_Init(&Timer2_configuration);
 
@@ -69,12 +73,29 @@ void DCM_Init(DCM_ConfigType *Config){
 			ACTIVE_HIGH,
 			TIMER_CHANNEL_ENABLE);
 
-	/* Timer 5 pwm */
-	TIMER_SetPrescaler(TIMER5_SELECTION,15);
-	TIMER_SetARR(TIMER5_SELECTION,19999);
+	/* OMAR */
+
+//	TIMER_ChannelInit(TIMER2_SELECTION,
+//			TIMER_CHANNEL_3,
+//			TIMER_PWM_MODE_1,
+//			ACTIVE_HIGH,
+//			TIMER_CHANNEL_ENABLE);
+
+	/* Timer 2 pwm */
+	TIMER_SetPrescaler(TIMER2_SELECTION,15);
+	TIMER_SetARR(TIMER2_SELECTION,19999);
 
 	TIMER_SetCompareValue(Config[0].Speed_TimerType,Config[0].Speed_ChannelType,0);
 	TIMER_SetCompareValue(Config[1].Speed_TimerType,Config[1].Speed_ChannelType,0);
+
+
+//	TIMER_SetCompareValue(TIMER2_SELECTION,TIMER_CHANNEL_3,19000);
+//
+//
+//	TIMER_Start_Continuous(TIMER2_SELECTION,TIMER_CHANNEL_3);
+
+
+
 
 
 }
@@ -114,11 +135,13 @@ void DCM_Rotate(DCM_Index DCM_Number,u8 Duty_Cycle,DCM_DirectionType Direction){
 void DCM_Stop(DCM_Index DCM_Number){
 
 	if(DCM_Number == DCM_RIGHT){
-		TIMER_Stop(DCM_1_SPEED_TIMER,DCM_1_SPEED_CHANNEL);
+		TIMER_SetDutyCycle(DCM_1_SPEED_TIMER,DCM_1_SPEED_CHANNEL,1);
+		//TIMER_Stop(DCM_1_SPEED_TIMER,DCM_1_SPEED_CHANNEL);
 
 	}
 	else if(DCM_Number == DCM_LEFT){
-		TIMER_Stop(DCM_2_SPEED_TIMER,DCM_2_SPEED_CHANNEL);
+		TIMER_SetDutyCycle(DCM_2_SPEED_TIMER,DCM_2_SPEED_CHANNEL,1);
+//		TIMER_Stop(DCM_2_SPEED_TIMER,DCM_2_SPEED_CHANNEL);
 
 	}
 }
@@ -141,8 +164,8 @@ void App_CarMoveRight(u8 Speed){
 }
 
 void App_CarMoveLeft(u8 Speed){
-	DCM_Rotate(DCM_RIGHT,Speed,DCM_REVERSE);
 	DCM_Stop(DCM_LEFT);
+	DCM_Rotate(DCM_RIGHT,Speed,DCM_REVERSE);
 }
 
 

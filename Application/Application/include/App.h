@@ -10,7 +10,7 @@
 #define APP_H_
 
 
-	void Peripheral_EnableClock(void);
+void Peripheral_EnableClock(void);
 
 
 

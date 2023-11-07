@@ -102,6 +102,8 @@
 /* # define for flash sector 1 */
 #define FLASH_SECTOR1_BASE_ADDRESS       0x08004000U
 
+#define FLASH_SECTOR2_BASE_ADDRESS       0x08008000U
+#define FLASH_SECTOR2_BASE_ADDRESS_4     0x08008004U
 
 
 #define    ROP_LEVEL_READ_INVALID         0x00 
