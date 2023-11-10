@@ -1,67 +1,69 @@
-/*******************************************************************************************/
-/*  Module       :   Ultrasonic                                                            */
-/*  File Name    :   Ultrasonic.c                                                          */
-/*  Description  :   Source File of the Ultrasonic  Driver                                 */
-/*  Author       :   Mahmoud Salah                                                         */
-/*  Date         :   01/11/2023                                                            */
-/*******************************************************************************************/
+/*
+ * ULTRASONIC_Program.c
+ *
+ *  Created on: Nov 7, 2023
+ *      Author: Omar Abouzaid
+ */
 
-/* Standard Types File */
-#include "../include/STD_Types.h"
-/* Bit Math File */
-#include "../include/BIT_MATH.h"
-
-/* RCC Specified Header Files */
-#include "../include/GPT_Interface.h"
-
-#include "../include/MGPIO_Interface.h"
-#include "../include/MNVIC_Interface.h"
-
-
-void Ultrsonic_Init(void) {
+/*Lib Layers*/
+#include "..\include\STD_Types.h"
+#include "..\include\BIT_MATH.h"
 
 
 
-	/* Ultra sonic Trigger Pin Initialization */
-	MGPIO_SetMode(PORTB, PIN0, GENRAL_PURPOSE_OUTPUT_MODE);
-	MGPIO_SetOutputPinMode(PORTB, PIN0, OUTPUT_PUSH_PULL,OUTPUT_MEDIUM_SPEED_TYPE);
+/*HAL Layers*/
+#include "..\include\ULTRASONIC_Interface.h"
+#include "..\include\ULTRASONIC_config.h"
+//#include "..\include\ULTRASONIC_private.h"
 
-	/* Ultra sonic echo Pin Initialization */
-	MGPIO_SetMode(PORTA, PIN8, ALTERNATE_FUNCTION_MODE);
-	MGPIO_SetAlternativeFuncPin(PORTA, PIN8, AF1_TIM1_TIM2);
 
-	/* Enable the  NVIC for the Timer 1 */
-	MNVIC_VoidEnbleInterrupt(EXTINT_TIM1CC_POSITION);
-	/* Initialize the ICU Unit of TIMER 1 for the echo Pin of the ultra sonic sensor*/
-	voidICU_Init();
+/*MCAL Layers*/
+#include "..\include\GPT_Interface.h"
+#include "..\include\MGPIO_Interface.h"
+#include "..\include\Delay.h"
 
+
+
+void UltraSonic_Init(void)
+{
+    /*Configure Trig pin as output*/
+	MGPIO_SetMode(TRIG_PORT,TRIG_PIN,GENRAL_PURPOSE_OUTPUT_MODE);
+	MGPIO_SetOutputPinMode(TRIG_PORT,TRIG_PIN,OUTPUT_PUSH_PULL,OUTPUT_LOW_SPEED_TYPE);
+	MGPIO_SetPinValue(TRIG_PORT,TRIG_PIN,PIN_LEVEL_LOW);
+
+    /*Configure echo pin as input*/
+	MGPIO_SetMode(ECHO_PORT,ECHO_PIN,INPUT_RESET_STATE);
+	MGPIO_SetInputPinMode(ECHO_PORT,ECHO_PIN,PULL_DOWN);
 }
 
-void Ultrsonic_Trigger(void)
-{
-	//TIMER_DelayUS(TIMER5_SELECTION,3);
+void UltraSonic_Send_Pulse(void) {
 
-	MGPIO_SetPinValue(PORTB,PIN0,PIN_LEVEL_HIGH);
-
-	TIMER_DelayUS(TIMER5_SELECTION,10);
-
-	MGPIO_SetPinValue(PORTB,PIN0,PIN_LEVEL_LOW);
-
-	TIMER_DelayUS(TIMER5_SELECTION, 250);
-
+    // Set trigger pin high for 10 microseconds to generate a pulse
+	MGPIO_SetPinValue(TRIG_PORT,TRIG_PIN,PIN_LEVEL_HIGH);
+	delay_us(10);
+	MGPIO_SetPinValue(TRIG_PORT,TRIG_PIN,PIN_LEVEL_LOW);
 }
 
-float UltrasonicCalculateDistance(void)
-{
-	volatile f32 Local_f32Distance = 0;
-	volatile f32 Local_f32Ton = 0;
+u32 UltraSonic_Measure_Distance(void){
+    // Wait for the echo pin to go high
+	volatile u8 Copy_pu8Data=0;
 
-	Local_f32Ton = f32MeasureTon();
 
-	volatile float speedOfSound = 345.2; // Speed of sound in air in m/s
-	volatile float soundTravelTime = (Local_f32Ton / 1000000UL); // Convert pulse width from us to seconds
+	while(Copy_pu8Data==0){
+		MGPIO_GetPinValue(ECHO_PORT,ECHO_PIN,&Copy_pu8Data);
+	}
 
-	Local_f32Distance = ((speedOfSound * soundTravelTime) / 2); // Distance in meters
-	return Local_f32Distance * 100; // Distance in meters
+    // Start timer
+    volatile u32 start_time = 0;
+    while(Copy_pu8Data==1){
+        start_time++;
+        delay_us(1);
+        MGPIO_GetPinValue(ECHO_PORT,ECHO_PIN,&Copy_pu8Data);
+    }
+    // Calculate distance in centimeters
+    volatile u32 distance = (start_time * 0.0343 * 10.7);
+    return distance;
+
+
 
 }

@@ -24,7 +24,6 @@ void Servo_Init(void)
 	MGPIO_SetMode(SERVO_PWM_PORT,SERVO_PWM_PIN,ALTERNATE_FUNCTION_MODE);
 	MGPIO_SetAlternativeFuncPin(SERVO_PWM_PORT,SERVO_PWM_PIN,AF1_TIM1_TIM2);
 
-	//TIMER_Init(&Timer2_configuration);
 
 
 	/*Select Channel for Timer2 */
@@ -34,12 +33,6 @@ void Servo_Init(void)
 			ACTIVE_HIGH,
 			TIMER_CHANNEL_ENABLE);
 
-
-	/* Timer 2 pwm */
-
-//	TIMER_SetPrescaler(SERVO_TIMER,15);
-//
-//	TIMER_SetARR(SERVO_TIMER,19999);
 
 	TIMER_SetCompareValue(SERVO_TIMER,SERVO_CHANNEL,1700);
 

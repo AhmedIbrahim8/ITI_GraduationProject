@@ -29,9 +29,14 @@ volatile u16 Global_u16Tim1Ch1InputCaptures[2] ={0};
 volatile u8  Global_u8Tim1Ch1Counter =1;
 
 
-
+/* Global Static Pointer To Function for the Timer ISRs*/
 static void (*Timer_Call_Back[4])(void)={NULL_PTR};
 
+
+/*
+ * @brief   this function is called in timer 2 interrupt
+ * @retval  no return
+ */
 void TIM2_IRQHandler(void){
 	if(Timer_Call_Back[0]!=NULL_PTR){
 		Timer_Call_Back[0]();
@@ -46,7 +51,10 @@ void TIM2_IRQHandler(void){
 	CLEAR_BIT(TIMER2->SR,CC4IF);
 }
 
-
+/*
+ * @brief   this function is called in timer 3 interrupt
+ * @retval  no return
+ */
 void TIM3_IRQHandler(void){
 	if(Timer_Call_Back[1]!=NULL_PTR){
 		Timer_Call_Back[1]();
@@ -62,7 +70,10 @@ void TIM3_IRQHandler(void){
 }
 
 
-
+/*
+ * @brief   this function is called in timer 4 interrupt
+ * @retval  no return
+ */
 void TIM4_IRQHandler(void){
 	if(Timer_Call_Back[2]!=NULL_PTR){
 		Timer_Call_Back[2]();
@@ -79,7 +90,10 @@ void TIM4_IRQHandler(void){
 
 
 
-
+/*
+ * @brief   this function is called in timer 5 interrupt
+ * @retval  no return
+ */
 void TIM5_IRQHandler(void){
 	if(Timer_Call_Back[3]!=NULL_PTR){
 		Timer_Call_Back[3]();
@@ -95,6 +109,11 @@ void TIM5_IRQHandler(void){
 }
 
 
+/* FUNCTION      : TIMER_VoidSetCallBack                                    */
+/* INPUT         : 1 - Timer Index                                          */
+/*                 2 - Pointer to the function that will be called          */
+/* OUTPUT        : No Return                                                */
+/* Description   : Function to set the call back if an interrupt happened   */
 
 void TIMER_VoidSetCallBack(TIMER_IDType Timer_Number,void (*ptr)(void)){
 	switch(Timer_Number)
@@ -116,8 +135,11 @@ void TIMER_VoidSetCallBack(TIMER_IDType Timer_Number,void (*ptr)(void)){
 
 
 
-
-
+/* FUNCTION      : TIMER_DelayUS                                            */
+/* INPUT         : 1 - Timer Index                                          */
+/*                 2 - Delay Value in Micro-seconds                         */
+/* OUTPUT        : No Return                                                */
+/* Description   : Function to Delay in Micro-seconds                       */
 void TIMER_DelayUS(TIMER_IDType Timer_Number,u32 Delay_Value){
 	switch(Timer_Number)
 	{
@@ -162,6 +184,11 @@ void TIMER_DelayUS(TIMER_IDType Timer_Number,u32 Delay_Value){
 }
 
 
+/* FUNCTION      : TIMER_DelayMS                                            */
+/* INPUT         : 1 - Timer Index                                          */
+/*                 2 - Delay Value in Milli-seconds                         */
+/* OUTPUT        : No Return                                                */
+/* Description   : Function to Delay in Milli-seconds                       */
 
 void TIMER_DelayMS(TIMER_IDType Timer_Number,u32 Delay_Value){
 	u32 counter = 0;
@@ -248,8 +275,14 @@ u32 TIMER_u32GetElapsedTime(TIMER_IDType Timer_Number)
 
 
 
-
-
+/* FUNCTION      : TIMER_ChannelInit                                          */
+/* INPUT         : 1 - Timer Index                                            */
+/*                 2 - Channel Index                                          */
+/*                 3 - Mode of the Channel                                    */
+/*                 4 - Channel Active Type (Active High or Active Low)        */
+/*                 5 - Channel Running Type (ON or OFF)                       */
+/* OUTPUT        : No Return                                                  */
+/* Description   : Function to initializating the Channel                     */
 void TIMER_ChannelInit(TIMER_IDType Timer_Number,
 		               TIMER_ChannelType ChannelID,
 					   TIMER_OutputCompareModeType Mode,
@@ -757,6 +790,13 @@ void TIMER_ChannelInit(TIMER_IDType Timer_Number,
 }
 
 
+
+/* FUNCTION      : TIMER_Init                                      */
+/* INPUT         : Configuration of the Timer Selection            */
+/* OUTPUT        : No Return                                       */
+/* Description   : The First Function needed to be called for the  */
+/*                 initialization of the timer                     */
+
 void TIMER_Init(TIMER_configType *Configuration){
 	/* Adjust the slave mode selection */
 	/* Use the internal clock */
@@ -857,6 +897,10 @@ void TIMER_Init(TIMER_configType *Configuration){
 
 }
 
+/* FUNCTION      : TIMER_Start_OneShot                                      */
+/* INPUT         : Timer Index                                              */
+/* OUTPUT        : No Return                                                */
+/* Description   : Function to Start the timer only once                    */
 
 void TIMER_Start_OneShot(TIMER_IDType Timer_Number){
 	/* Here, after one shot, it will stop the timer
@@ -885,6 +929,12 @@ void TIMER_Start_OneShot(TIMER_IDType Timer_Number){
 
 }
 
+/* FUNCTION      : TIMER_Start_Continuous                                    */
+/* INPUT         : 1 - Timer Index                                           */
+/*                 2 - Channel Index                                         */
+/* OUTPUT        : No Return                                                 */
+/* Description   : Function to Start the timer Continuously of a given timer */
+/*                 and a given Channel or no channel or All channels         */
 
 void TIMER_Start_Continuous(TIMER_IDType Timer_Number,TIMER_ChannelType ChannelID){
 	/* Here, It will continuously output a PWM Signal */
@@ -1012,6 +1062,12 @@ void TIMER_Start_Continuous(TIMER_IDType Timer_Number,TIMER_ChannelType ChannelI
 
 
 
+/* FUNCTION      : TIMER_EnableInterrupt                                     */
+/* INPUT         : 1 - Timer Index                                           */
+/*                 2 - Interrupt Type                                        */
+/* OUTPUT        : No Return                                                 */
+/* Description   : Function to Enable the Interrupt for a given Timer and a  */
+/*                 given Interrupt Type                                      */
 
 void TIMER_EnableInterrupt(TIMER_IDType Timer_Number,TIMER_InterryptType InterruptID){
 	switch(Timer_Number)
@@ -1106,6 +1162,16 @@ void TIMER_EnableInterrupt(TIMER_IDType Timer_Number,TIMER_InterryptType Interru
 			break;
 	}
 }
+
+
+
+/* FUNCTION      : TIMER_DisableInterrupt                                     */
+/* INPUT         : 1 - Timer Index                                            */
+/*                 2 - Interrupt Type                                         */
+/* OUTPUT        : No Return                                                  */
+/* Description   : Function to Disable the Interrupt for a given Timer and a  */
+/*                 given Interrupt Type                                       */
+
 void TIMER_DisableInterrupt(TIMER_IDType Timer_Number,TIMER_InterryptType InterruptID){
 	switch(Timer_Number)
 	{
@@ -1200,7 +1266,10 @@ void TIMER_DisableInterrupt(TIMER_IDType Timer_Number,TIMER_InterryptType Interr
 	}
 }
 
-
+/* FUNCTION      : TIMER_Stop                                               */
+/* INPUT         : Timer Index                                              */
+/* OUTPUT        : No Return                                                */
+/* Description   : Function to Stop the timer                               */
 void TIMER_Stop(TIMER_IDType Timer_Number,TIMER_ChannelType ChannelID){
 	switch(Timer_Number)
 	{
@@ -1317,6 +1386,11 @@ void TIMER_Stop(TIMER_IDType Timer_Number,TIMER_ChannelType ChannelID){
 	}
 }
 
+/* FUNCTION      : TIMER_SetPrescaler                                       */
+/* INPUT         : 1 - Timer Index                                          */
+/*                 2 - Pre-scaler Value                                     */
+/* OUTPUT        : No Return                                                */
+/* Description   : Function to Adjust the pre-scaler of a given Timer       */
 
 void TIMER_SetPrescaler(TIMER_IDType Timer_Number , TIMER_PrescalerType prescaler){
 	switch(Timer_Number)
@@ -1338,6 +1412,13 @@ void TIMER_SetPrescaler(TIMER_IDType Timer_Number , TIMER_PrescalerType prescale
 }
 
 
+/* FUNCTION      : TIMER_SetCompareValue                                    */
+/* INPUT         : 1 - Timer Index                                          */
+/*                 2 - Channel Index                                        */
+/*                 3 - Compare Value Index                                  */
+/* OUTPUT        : No Return                                                */
+/* Description   : Function to Adjust the Compare Value of a given Timer    */
+/*                 and given Channel                                        */
 
 void TIMER_SetCompareValue(TIMER_IDType Timer_Number, TIMER_ChannelType ChannelID , TIMER_OutputCompareValue ComapreValue){
 	switch(Timer_Number)
@@ -1444,6 +1525,12 @@ void TIMER_SetCompareValue(TIMER_IDType Timer_Number, TIMER_ChannelType ChannelI
 	}
 }
 
+/* FUNCTION      : TIMER_SetARR                                             */
+/* INPUT         : 1 - Timer Index                                          */
+/*                 2 - Auto Reload Register Value                           */
+/* OUTPUT        : No Return                                                */
+/* Description   : Function to Adjust the Auto Reload Register Value  of a  */
+/*                 a given Timer                                            */
 
 void TIMER_SetARR(TIMER_IDType Timer_Number , TIMER_AutoReloadType AutoReloadValue){
 	switch(Timer_Number)
@@ -1464,6 +1551,11 @@ void TIMER_SetARR(TIMER_IDType Timer_Number , TIMER_AutoReloadType AutoReloadVal
 
 }
 
+
+/* FUNCTION      : TIMER_ClearTimerCount                                    */
+/* INPUT         : 1 - Timer Index                                          */
+/* OUTPUT        : No Return                                                */
+/* Description   : Function to Clear the Counter register of a given Timer  */
 
 void TIMER_ClearTimerCount(TIMER_IDType Timer_Number){
 	switch(Timer_Number)
@@ -1486,6 +1578,13 @@ void TIMER_ClearTimerCount(TIMER_IDType Timer_Number){
 
 
 
+/* FUNCTION      : TIMER_SetDutyCycle                                       */
+/* INPUT         : 1 - Timer Index                                          */
+/*                 2 - Channel Index                                        */
+/*                 3 - DutyCycle                                            */
+/* OUTPUT        : No Return                                                */
+/* Description   : Function to Adjust the Duty Cycle of a given Timer       */
+/*                 and given Channel                                        */
 
 void TIMER_SetDutyCycle(TIMER_IDType Timer_Number, TIMER_ChannelType ChannelID ,u8 DutyCycle){
 	u32 TimerOnValue =0;
@@ -1511,7 +1610,10 @@ void TIMER_SetDutyCycle(TIMER_IDType Timer_Number, TIMER_ChannelType ChannelID ,
 
 
 
-
+/*
+ * @brief   this function initializes the ICU mode in Timer
+ * @retval  no return
+ */
 void voidICU_Init(void)
 {
 
@@ -1523,13 +1625,7 @@ void voidICU_Init(void)
 		/* capture is done ---> CH1 is rising edge and CH2 is falling edge */
 		TIM1->CCER &=  ~0x2;
 		TIM1->CCER |=  0x20;
-		/* configure CH1 as direct input TI1 & CH2 as indirect input TI2 */
-		//TIM1->CCMR1 |=  0x1;	//TIM1->CCMR1 &= ~0x2;
-		//TIM1->CCMR1 &= ~0x10;	//TIM1->CCMR1 |=  0x20;
-		/* no prescaler, capture is done each time an edge is detected on the capture input --> on CH1 & CH2 */
-		//TIM1->CCMR1 &= ~0xC;	//TIM1->CCMR1 &= ~0xC00;
-		/* No filter, sampling is done at fDTS --> on CH1 & CH2 */
-		//TIM1->CCMR1 &= ~0xF0;	//TIM1->CCMR1 &= ~0xF000;
+
 	TIM1->CCMR1 = 0x0201; /*Enable Filter*/
 
 		/* configure the timer slave mode with TI1FP1 as reset signal */
@@ -1545,6 +1641,13 @@ void voidICU_Init(void)
 } // end of function
 
 
+
+
+
+/*
+ * @brief   this function measures the on time to get the duty cycle
+ * @retval  no return
+ */
 f32 f32MeasureTon(void)
 {
 
@@ -1556,6 +1659,14 @@ f32 f32MeasureTon(void)
 	return Local_f32TimeOn;
 }
 
+
+
+
+
+/*
+ * @brief   this function measures period of signal
+ * @retval  no return
+ */
 f32 f32MeasureTotalTime(void)
 {
 
@@ -1565,6 +1676,14 @@ f32 f32MeasureTotalTime(void)
 
 	return Local_f32TotalTime;
 }
+
+
+
+
+/*
+ * @brief   this function measures the freqency of signal
+ * @retval  no return
+ */
 f32 f32MeasureFrequncy(void) {
 
 	volatile f32 Local_f32Frequncy = 0;
@@ -1574,6 +1693,15 @@ f32 f32MeasureFrequncy(void) {
 
 	return Local_f32Frequncy;
 }
+
+
+
+
+
+/*
+ * @brief   this function measures the duty cycle
+ * @retval  no return
+ */
 f32 f32MeasureDutyCycle(void) {
 
 	volatile f32 Local_f32DutyCycle = 0;
@@ -1586,10 +1714,13 @@ f32 f32MeasureDutyCycle(void) {
 
 
 
+/*
+ * @brief   this function is called when ICU interrupt happens
+ * @retval  no return
+ */
 void TIM1_CC_IRQHandler(void)
 {
-//	if(! Global_u8Tim1Ch1IsCaptureDone)
-//	{
+
 		if(1 == Global_u8Tim1Ch1Counter)
 		{
 			Global_u16Tim1Ch1InputCaptures[0] = TIM1->CCR1 ;
@@ -1601,7 +1732,6 @@ void TIM1_CC_IRQHandler(void)
 		Global_u16Tim1Ch1InputCaptures[1] = Global_u16Tim1Ch1InputCaptures[1]
 				+ 2;
 			Global_u8Tim1Ch1Counter = 1;
-//			Global_u8Tim1Ch1IsCaptureDone = TRUE;
 		}
 
 

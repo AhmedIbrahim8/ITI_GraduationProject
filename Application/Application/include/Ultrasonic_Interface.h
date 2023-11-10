@@ -1,19 +1,23 @@
-/*******************************************************************************************/
-/*  Module       :   Ultrasonic                                                            */
-/*  File Name    :   Ultrasonic_Interface.h                                                */
-/*  Description  :   Interface File of the Ultrasonic  Driver                              */
-/*  Author       :   Mahmoud Salah                                                         */
-/*  Date         :   01/11/2023                                                            */
-/*******************************************************************************************/
+/*
+ * ULTRASONIC_Interface.h
+ *
+ *  Created on: Nov 7, 2023
+ *      Author: Omar Abouzaid
+ */
 
 #ifndef ULTRASONIC_INTERFACE_H_
 #define ULTRASONIC_INTERFACE_H_
 
-void Ultrsonic_Init(void);
-void Ultrsonic_Trigger(void);
+/*Initialization the Ultrasonic */
+void UltraSonic_Init(void);
 
-float UltrasonicCalculateDistance(void);
 
+/*Send pulse on the Trig pin */
+void UltraSonic_Send_Pulse(void);
+
+
+/*Measure the Distance*/
+u32 UltraSonic_Measure_Distance(void);
 
 
 #endif /* ULTRASONIC_INTERFACE_H_ */

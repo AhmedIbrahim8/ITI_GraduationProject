@@ -6,11 +6,22 @@
 /*  Date         :   01/11/2023                                                            */
 /*******************************************************************************************/
 
-
+/*******************************************************************************************/
+/*********************************** Included  Files ***************************************/
+/*******************************************************************************************/
 #include "../include/MRCC_Interface.h"
 
 #include "../include/App.h"
+/************************************************************/
 
+
+
+
+
+/*
+ * @brief   this function initialize the clock of all peripherals used in this project
+ * @retval  no return
+ */
 void Peripheral_EnableClock(void){
 	MRCC_Init();
 	MRCC_Enable_Peripheral(RCC_APB1,RCC_APB1_TIM2);
