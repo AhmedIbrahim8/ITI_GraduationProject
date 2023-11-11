@@ -6,18 +6,26 @@
     <title>Firebase Storage File Upload</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 20px;
             text-align: center;
+            background-color: #f5f5f5;
+            background-image: url('https://example.com/pattern.png'); /* Replace with your pattern URL */
         }
 
         h1 {
-            color: #333;
+            color: #3498db;
+            margin-bottom: 20px;
         }
 
         h2 {
-            margin-top: 20px;
+            margin-top: 30px;
             color: #555;
+        }
+
+        p {
+            color: #777;
+            margin-bottom: 30px;
         }
 
         #fileInput {
@@ -28,10 +36,12 @@
             display: inline-block;
             background-color: #3498db;
             color: #fff;
-            padding: 10px 20px;
+            padding: 15px 25px;
             cursor: pointer;
-            border-radius: 5px;
+            border-radius: 8px;
             transition: background-color 0.3s;
+            font-size: 16px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         label:hover {
@@ -41,26 +51,42 @@
         button {
             background-color: #2ecc71;
             color: #fff;
-            padding: 10px 20px;
+            padding: 15px 25px;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
             transition: background-color 0.3s;
+            font-size: 16px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         button:hover {
             background-color: #27ae60;
         }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-top: 30px;
+            margin-bottom: 30px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
     </style>
 </head>
 <body>
     <h1>Firebase Storage File Upload</h1>
+    <p>This webpage is a graduation project for the Information Technology Institute (ITI).</p>
 
     <!-- File Upload Section -->
     <h2>File Upload</h2>
-    <label for="fileInput">Choose a file</label>
-    <input type="file" id="fileInput" accept=".jpg, .jpeg, .png">
+    <label for="fileInput">Choose a Binary File to upload</label>
+    <input type="file" id="fileInput" accept="image/*">
     <button onclick="uploadFile()">Upload File</button>
+
 
     <!-- Firebase Configuration -->
     <script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"></script>
@@ -68,13 +94,13 @@
     <script>
         // Initialize Firebase with your project config
         const firebaseConfig = {
-             apiKey: "your_api_key",
-             authDomain: "your_auth_domain",
-             databaseURL: "your_database_url",
-             projectId: "your_project_id",
-             storageBucket: "your_storage_bucket",
-             messagingSenderId: "your_messaging_sender_id",
-             appId: "your_app_id"
+            apiKey: "AIzaSyBOYxIAOxJTkxuDfRu6lx8Czq4osMcja1I",
+            authDomain: "graduation-project-39d5f.firebaseapp.com",
+            databaseURL: "https://graduation-project-39d5f-default-rtdb.firebaseio.com",
+            projectId: "graduation-project-39d5f",
+            storageBucket: "graduation-project-39d5f.appspot.com",
+            messagingSenderId: "374855830617",
+            appId: "1:374855830617:web:46cef63472d67262b0b548"
         };
 
         firebase.initializeApp(firebaseConfig);
@@ -86,6 +112,7 @@
         // File Upload Function
         function uploadFile() {
             const fileInput = document.getElementById('fileInput');
+            const previewImage = document.getElementById('previewImage');
             const file = fileInput.files[0];
 
             if (file) {
@@ -93,6 +120,10 @@
 
                 uploadTask.then(snapshot => {
                     console.log('File uploaded successfully!');
+                    // Display the uploaded image
+                    storageRef.child(file.name).getDownloadURL().then(url => {
+                        previewImage.src = url;
+                    });
                 }).catch(error => {
                     console.error('Error uploading file:', error);
                 });
