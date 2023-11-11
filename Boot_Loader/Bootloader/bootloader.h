@@ -21,7 +21,7 @@
 /* UART usedd for get command from the user */
 #define    BL_HOST_COMMUNICATION_UART         &huart1
 
-#define    DEBUG_INFO_DISABLE                    0
+#define    DEBUG_INFO_DISABLE                   0
 #define    DEBUG_INFO_ENABLE                    1
 #define    BL_DEBUG_ENABLE                    DEBUG_INFO_DISABLE
 

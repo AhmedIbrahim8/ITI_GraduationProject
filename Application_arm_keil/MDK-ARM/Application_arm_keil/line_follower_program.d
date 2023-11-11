@@ -1,0 +1,11 @@
+application_arm_keil\line_follower_program.o: ..\Application\LINE_FOLLOWER_PROGRAM.c
+application_arm_keil\line_follower_program.o: ..\Application\STD_Types.h
+application_arm_keil\line_follower_program.o: ..\Application\BIT_MATH.h
+application_arm_keil\line_follower_program.o: ..\Application\MGPIO_Interface.h
+application_arm_keil\line_follower_program.o: ..\Application\MNVIC_Interface.h
+application_arm_keil\line_follower_program.o: ..\Application\MEXTI_Interface.h
+application_arm_keil\line_follower_program.o: ..\Application\GPT_Interface.h
+application_arm_keil\line_follower_program.o: ..\Application\LINE_FOLLOWER_CONFIG.h
+application_arm_keil\line_follower_program.o: ..\Application\LINE_FOLLOWER_INTERFACE.h
+application_arm_keil\line_follower_program.o: ..\Application\DCM_Interface.h
+application_arm_keil\line_follower_program.o: ..\Application\DCM_Config.h

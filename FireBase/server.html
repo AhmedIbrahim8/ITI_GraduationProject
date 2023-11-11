@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Storage File Upload</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        h2 {
+            margin-top: 20px;
+            color: #555;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        label {
+            display: inline-block;
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        label:hover {
+            background-color: #2980b9;
+        }
+
+        button {
+            background-color: #2ecc71;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #27ae60;
+        }
+    </style>
+</head>
+<body>
+    <h1>Firebase Storage File Upload</h1>
+
+    <!-- File Upload Section -->
+    <h2>File Upload</h2>
+    <label for="fileInput">Choose a file</label>
+    <input type="file" id="fileInput" accept=".jpg, .jpeg, .png">
+    <button onclick="uploadFile()">Upload File</button>
+
+    <!-- Firebase Configuration -->
+    <script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"></script>
+
+    <script>
+        // Initialize Firebase with your project config
+        const firebaseConfig = {
+             apiKey: "your_api_key",
+             authDomain: "your_auth_domain",
+             databaseURL: "your_database_url",
+             projectId: "your_project_id",
+             storageBucket: "your_storage_bucket",
+             messagingSenderId: "your_messaging_sender_id",
+             appId: "your_app_id"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+
+        // Get a reference to the Firebase storage service
+        const storage = firebase.storage();
+        const storageRef = storage.ref();
+
+        // File Upload Function
+        function uploadFile() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+
+            if (file) {
+                const uploadTask = storageRef.child(file.name).put(file);
+
+                uploadTask.then(snapshot => {
+                    console.log('File uploaded successfully!');
+                }).catch(error => {
+                    console.error('Error uploading file:', error);
+                });
+            } else {
+                console.error('No file selected for upload.');
+            }
+        }
+    </script>
+</body>
+</html>

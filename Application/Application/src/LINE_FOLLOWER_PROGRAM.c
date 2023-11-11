@@ -12,16 +12,20 @@
 #include "../include/STD_Types.h"
 /* Bit Math File */
 #include "../include/BIT_MATH.h"
-/* LINE_FOLLOWER Specified Header Files */
-#include "../include/LINE_FOLLOWER_CONFIG.h"
-#include "../include/LINE_FOLLOWER_INTERFACE.h"
-#include "../include/LINE_FOLLOWER_CONFIG.h"
-#include "../include/LINE_FOLLOWER_INTERFACE.h"
+
 /* Used MCAL Drivers */
 #include "../include/MGPIO_Interface.h"
 #include "../include/MNVIC_Interface.h"
 #include "../include/MEXTI_Interface.h"
 #include "../include/GPT_Interface.h"
+
+
+/* LINE_FOLLOWER Specified Header Files */
+#include "../include/LINE_FOLLOWER_CONFIG.h"
+#include "../include/LINE_FOLLOWER_INTERFACE.h"
+#include "../include/LINE_FOLLOWER_CONFIG.h"
+#include "../include/LINE_FOLLOWER_INTERFACE.h"
+
 
 
 
@@ -71,8 +75,8 @@ void line_follower_init()
 	MGPIO_SetMode(RIGHT_LED_PORT,RIGHT_LED_PIN,INPUT_RESET_STATE);
 	MGPIO_SetMode(LEFT_LED_PORT,LEFT_LED_PIN,INPUT_RESET_STATE);
 
-	MGPIO_SetInputPinMode(RIGHT_LED_PORT,RIGHT_LED_PIN,PULL_UP);
-	MGPIO_SetInputPinMode(LEFT_LED_PORT,RIGHT_LED_PIN,PULL_UP);
+	MGPIO_SetInputPinMode(RIGHT_LED_PORT,RIGHT_LED_PIN,PULL_DOWN);
+	MGPIO_SetInputPinMode(LEFT_LED_PORT,LEFT_LED_PIN,PULL_DOWN);
 
 	/*		EXTI initialization		*/
 	MEXTI_voidInterruptSetPort(RIGHT_LED_INTERRUPT,RIGHT_LED_PORT);
