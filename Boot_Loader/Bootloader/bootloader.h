@@ -23,7 +23,7 @@
 
 #define    DEBUG_INFO_DISABLE                    0
 #define    DEBUG_INFO_ENABLE                    1
-#define    BL_DEBUG_ENABLE                    DEBUG_INFO_ENABLE
+#define    BL_DEBUG_ENABLE                    DEBUG_INFO_DISABLE
 
 
 /* CRC engine used */
