@@ -12,4 +12,8 @@
 void Speed_sensor_Init (void);
 
 
+
+extern volatile u16 holes_counter;
+extern volatile u16 turns;
+
 #endif /* OPTO_COUPLER_INTERFACE_H_ */
