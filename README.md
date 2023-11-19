@@ -25,7 +25,7 @@ In embedded systems, a bootloader is a small program or piece of code that resid
            - Initialization.<br />  	      
            - Loading Firmware.<br />                   
            - Boot Mode Selection.<br />
-           - Security.<br />   
+           - Security.<br />
            - Communication Interface.<br />
            - Error Handling.<br />
            - Flexibility and Customization.<br />
