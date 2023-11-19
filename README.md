@@ -34,4 +34,8 @@ In embedded systems, a bootloader is a small program or piece of code that resid
 ![bootloader commands](https://github.com/AhmedIbrahim8/ITI_GraduationProject/assets/91912492/a9bee45b-05be-4efc-a2e9-fe5f18f672ea)
 ![Capture](https://github.com/AhmedIbrahim8/ITI_GraduationProject/assets/91912492/d55cc892-17e6-46ad-a0bb-8281ab037604)
 
+## Integrating Bootloader with FOTA Feature
+Check out this link below:<br />
+https://drive.google.com/file/d/1sYN59SUFgZJCpa9KlOHTZoJUcymGCWB_/view?usp=drive_link
+
 
