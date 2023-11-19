@@ -31,4 +31,6 @@ In embedded systems, a bootloader is a small program or piece of code that resid
            - Flexibility and Customization.<br />
 
 ![fota](https://github.com/AhmedIbrahim8/ITI_GraduationProject/assets/91912492/b9e189b1-bc45-4374-b3a0-34120ab78ede)
+![bootloader commands](https://github.com/AhmedIbrahim8/ITI_GraduationProject/assets/91912492/a9bee45b-05be-4efc-a2e9-fe5f18f672ea)
+
 
