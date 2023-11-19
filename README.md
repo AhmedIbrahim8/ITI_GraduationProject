@@ -45,4 +45,7 @@ https://drive.google.com/file/d/1sYN59SUFgZJCpa9KlOHTZoJUcymGCWB_/view?usp=drive
 ![Capture](https://github.com/AhmedIbrahim8/ITI_GraduationProject/assets/91912492/8d575476-790b-4fae-a0f0-dbed944b2b83)
 ![Capture](https://github.com/AhmedIbrahim8/ITI_GraduationProject/assets/91912492/fb271dbb-94c6-4379-b377-670fba4b714e)
 
+Check out this link below for Application Videos:<br />
+https://drive.google.com/drive/folders/1-h-j3zhHwKuHaN8I5he7ubuOyA3Ot4VG?usp=sharing
+
 
