@@ -22,8 +22,8 @@ Each of these features is instrumental in orchestrating a secure, systematic, an
 
 ## 2 Bootloader
 In embedded systems, a bootloader is a small program or piece of code that resides in the non-volatile memory of a microcontroller or microprocessor. Its primary function is to initialize the system and load the main application program (firmware) into the system’s RAM or flash memory for execution. Here are the key functions and characteristics of a bootloader in embedded systems:<br />
-           - Initialization.<br />  	      
-           - Loading Firmware.<br />                   
+           - Initialization.<br />
+           - Loading Firmware.<br />
            - Boot Mode Selection.<br />
            - Security.<br />
            - Communication Interface.<br />
