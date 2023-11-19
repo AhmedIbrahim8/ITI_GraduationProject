@@ -1,2 +1,2 @@
-# ITI_GraduationProject
-iTi Graduation Project 
+# ITI_GraduationProject 
+# Firm-Ware Over The Air (FOTA)
