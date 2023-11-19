@@ -1,0 +1,11 @@
+v2v_project\main_speed.o: ..\Core\Src\main_speed.c
+v2v_project\main_speed.o: ../Core/Inc/STD_Types.h
+v2v_project\main_speed.o: ../Core/Inc/BIT_MATH.h
+v2v_project\main_speed.o: ../Core/Inc/DCM_Interface.h
+v2v_project\main_speed.o: ../Core/Inc/DCM_Config.h
+v2v_project\main_speed.o: ../Core/Inc/GPT_Interface.h
+v2v_project\main_speed.o: ../Core/Inc/Ultrasonic_Interface.h
+v2v_project\main_speed.o: ../Core/Inc/SERVO_Interface.h
+v2v_project\main_speed.o: ../Core/Inc/OPTO_COUPLER_INTERFACE.h
+v2v_project\main_speed.o: ../Core/Inc/HIR_Interface.h
+v2v_project\main_speed.o: ../Core/Inc/App.h

@@ -176,7 +176,7 @@ void SystemInit(void)
 #endif /* DATA_IN_ExtSRAM || DATA_IN_ExtSDRAM */
 
   /* Configure the Vector Table location -------------------------------------*/
-	SCB->VTOR = FLASH_BASE | 0x8000;
+	SCB->VTOR = FLASH_BASE | 0xC000;
 }
 
 /**

@@ -12,7 +12,7 @@ static uint8_t CBL_STM32F401_Get_RDP_Level();
 
 static uint8_t Perform_Flash_Erase(uint8_t Sector_Number,uint8_t Number_Of_Sectors);
 
-static void Bootloader_Jump_To_App_Code();
+static void Bootloader_Jump_To_App_Code(uint32_t HOST_Jump_Address);
 
 static uint8_t Host_Jump_Address_Verification(uint32_t Jump_Address);
 
@@ -167,7 +167,7 @@ BL_Status BL_UART_Fetch_Host_Command(void)
 					case CBL_GO_TO_ADDR_CMD:
 					  /* Call the static function that responsible for jumping to an address   */
 				    Bootloader_Jump_To_Address(BL_Host_Buffer);
-				    Bootloader_Jump_To_App_Code();
+//				    Bootloader_Jump_To_App_Code();
 					  Status = BL_OK;
 					  break;
 					case CBL_FLASH_ERASE_CMD:
@@ -580,7 +580,7 @@ static void Bootloader_Jump_To_Address(uint8_t *Host_Buffer)
 			1 : because of the T-Bit 
 			*/
 			Jump_Address = (Jump_Ptr)(HOST_Jump_Address+1);
-			Bootloader_Jump_To_App_Code();
+			Bootloader_Jump_To_App_Code(HOST_Jump_Address);
 			/* Branch to the Address  */
 			Jump_Address();
 		}
@@ -599,35 +599,101 @@ static void Bootloader_Jump_To_Address(uint8_t *Host_Buffer)
 }
 
 
-static void Bootloader_Jump_To_App_Code(){
+static void Bootloader_Jump_To_App_Code(uint32_t HOST_Jump_Address){
 	
-		/* Value of the main stack pointer of our main application */
-	volatile uint32_t MSP_Value = *((volatile uint32_t *)FLASH_SECTOR2_BASE_ADDRESS);
+	if(HOST_Jump_Address == 0x08008000)
+	{
+					/* Value of the main stack pointer of our main application */
+			volatile uint32_t MSP_Value = *((volatile uint32_t *)FLASH_SECTOR2_BASE_ADDRESS);
+			
+			
+			//MSP_Value = MSP_Value - 0x00000010U;
+			
+
+			
+			/* Set Main Stack Pointer */
+			__set_MSP(MSP_Value);
+		//	OS_SET_MSP(MSP_Value);
+			
+				/* DeInitialize / Disable of modules */
+			HAL_RCC_DeInit(); /* DeInitialize the RCC clock configuration to the default reset state. */
+												/* Disable Maskable Interrupt */
+												
+												
+				/* Reset Handler definition function of our main application */
+			uint32_t MainAppAddr = *((volatile uint32_t *)(FLASH_SECTOR2_BASE_ADDRESS + 4));
+			
+
+			
+			/* Fetch the reset handler address of the user application */
+			volatile pMainApp ResetHandler_Address = (pMainApp)MainAppAddr;
+			
+			/* Jump to Application Reset Handler */
+			ResetHandler_Address();
+	}
+	else if(HOST_Jump_Address == 0x0800C000){
+							/* Value of the main stack pointer of our main application */
+			volatile uint32_t MSP_Value_App2 = *((volatile uint32_t *)0x0800C000);
+			
+			
+			//MSP_Value = MSP_Value - 0x00000010U;
+			
+
+			
+			/* Set Main Stack Pointer */
+			__set_MSP(MSP_Value_App2);
+		//	OS_SET_MSP(MSP_Value);
+			
+				/* DeInitialize / Disable of modules */
+			HAL_RCC_DeInit(); /* DeInitialize the RCC clock configuration to the default reset state. */
+												/* Disable Maskable Interrupt */
+												
+												
+				/* Reset Handler definition function of our main application */
+			uint32_t MainAppAddr_App2 = *((volatile uint32_t *)(0x0800C000 + 4));
+			
+
+			
+			/* Fetch the reset handler address of the user application */
+			volatile pMainApp ResetHandler_Address_App2 = (pMainApp)MainAppAddr_App2;
+			
+			/* Jump to Application Reset Handler */
+			ResetHandler_Address_App2();
 	
 	
-	MSP_Value = MSP_Value - 0x00000010U;
+	}
+	else if(HOST_Jump_Address == 0x08010000){
+										/* Value of the main stack pointer of our main application */
+			volatile uint32_t MSP_Value_App3 = *((volatile uint32_t *)0x08010000);
+			
+			
+			//MSP_Value = MSP_Value - 0x00000010U;
+			
+
+			
+			/* Set Main Stack Pointer */
+			__set_MSP(MSP_Value_App3);
+		//	OS_SET_MSP(MSP_Value);
+			
+				/* DeInitialize / Disable of modules */
+			HAL_RCC_DeInit(); /* DeInitialize the RCC clock configuration to the default reset state. */
+												/* Disable Maskable Interrupt */
+												
+												
+				/* Reset Handler definition function of our main application */
+			uint32_t MainAppAddr_App3 = *((volatile uint32_t *)(0x08010000 + 4));
+			
+
+			
+			/* Fetch the reset handler address of the user application */
+			volatile pMainApp ResetHandler_Address_App3 = (pMainApp)MainAppAddr_App3;
+			
+			/* Jump to Application Reset Handler */
+			ResetHandler_Address_App3();
+	
+	}
 	
 
-	
-	/* Set Main Stack Pointer */
-	__set_MSP(MSP_Value);
-//	OS_SET_MSP(MSP_Value);
-	
-		/* DeInitialize / Disable of modules */
-	HAL_RCC_DeInit(); /* DeInitialize the RCC clock configuration to the default reset state. */
-	                  /* Disable Maskable Interrupt */
-										
-										
-		/* Reset Handler definition function of our main application */
-	uint32_t MainAppAddr = *((volatile uint32_t *)(FLASH_SECTOR2_BASE_ADDRESS + 4));
-	
-
-	
-	/* Fetch the reset handler address of the user application */
-	volatile pMainApp ResetHandler_Address = (pMainApp)MainAppAddr;
-	
-	/* Jump to Application Reset Handler */
-	ResetHandler_Address();
 	
 	
 	

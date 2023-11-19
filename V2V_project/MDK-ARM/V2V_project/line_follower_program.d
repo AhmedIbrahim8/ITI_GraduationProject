@@ -1,0 +1,11 @@
+v2v_project\line_follower_program.o: ..\Core\Src\LINE_FOLLOWER_PROGRAM.c
+v2v_project\line_follower_program.o: ../Core/Inc/STD_Types.h
+v2v_project\line_follower_program.o: ../Core/Inc/BIT_MATH.h
+v2v_project\line_follower_program.o: ../Core/Inc/MGPIO_Interface.h
+v2v_project\line_follower_program.o: ../Core/Inc/MNVIC_Interface.h
+v2v_project\line_follower_program.o: ../Core/Inc/MEXTI_Interface.h
+v2v_project\line_follower_program.o: ../Core/Inc/GPT_Interface.h
+v2v_project\line_follower_program.o: ../Core/Inc/LINE_FOLLOWER_CONFIG.h
+v2v_project\line_follower_program.o: ../Core/Inc/LINE_FOLLOWER_INTERFACE.h
+v2v_project\line_follower_program.o: ../Core/Inc/DCM_Interface.h
+v2v_project\line_follower_program.o: ../Core/Inc/DCM_Config.h

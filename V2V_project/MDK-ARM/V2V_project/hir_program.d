@@ -1,0 +1,12 @@
+v2v_project\hir_program.o: ..\Core\Src\HIR_Program.c
+v2v_project\hir_program.o: ../Core/Inc/STD_Types.h
+v2v_project\hir_program.o: ../Core/Inc/BIT_MATH.h
+v2v_project\hir_program.o: ../Core/Inc/MRCC_Interface.h
+v2v_project\hir_program.o: ../Core/Inc/MEXTI_Interface.h
+v2v_project\hir_program.o: ../Core/Inc/MNVIC_Interface.h
+v2v_project\hir_program.o: ../Core/Inc/MSYSTICK_Interface.h
+v2v_project\hir_program.o: ../Core/Inc/MGPIO_Interface.h
+v2v_project\hir_program.o: ../Core/Inc/GPT_Interface.h
+v2v_project\hir_program.o: ../Core/Inc/HIR_Private.h
+v2v_project\hir_program.o: ../Core/Inc/HIR_Config.h
+v2v_project\hir_program.o: ../Core/Inc/HIR_Interface.h
