@@ -18,3 +18,4 @@ This feature ensures the continuous improvement of the device's operational stab
 
 Each of these features is instrumental in orchestrating a secure, systematic, and efficient FOTA update process, fostering the reliability, security, and enhanced performance of electronic devices.<br /> 
 
+![fota](https://github.com/AhmedIbrahim8/ITI_GraduationProject/assets/91912492/ce8a8d37-339d-4665-81f7-f9249d606f44)
